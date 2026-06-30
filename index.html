@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Subscope — サブスク・固定費を見通す</title>
+<meta name="description" content="Subscope（サブスコープ）は、サブスクリプションと固定費の支出を「見通す」ためのミニマルな管理アプリです。">
+<style>
+  :root{ --blue:#0d47c9; --cyan:#2bd2e4; --ink:#1c1c22; --muted:#6a6c75; }
+  *{box-sizing:border-box}
+  body{font-family:-apple-system,'Helvetica Neue',Arial,"Hiragino Kaku Gothic ProN",Meiryo,sans-serif;
+       margin:0;color:var(--ink);line-height:1.8;background:#fff;}
+  .hero{background:linear-gradient(135deg,var(--blue),var(--cyan));color:#fff;text-align:center;padding:64px 20px 56px;}
+  .hero img{width:108px;height:108px;border-radius:24px;box-shadow:0 10px 30px rgba(0,0,0,.25);}
+  .hero h1{font-size:2.1em;margin:18px 0 6px;letter-spacing:.02em;}
+  .hero p{font-size:1.05em;opacity:.95;margin:0;}
+  main{max-width:720px;margin:0 auto;padding:40px 20px 80px;}
+  h2{font-size:1.25em;margin:1.8em 0 .6em;}
+  ul.feat{list-style:none;padding:0;margin:0;}
+  ul.feat li{padding:10px 0 10px 30px;position:relative;border-bottom:1px solid #eee;}
+  ul.feat li::before{content:"●";color:var(--cyan);position:absolute;left:6px;}
+  .card{background:#f6f8fb;border:1px solid #e7ebf1;border-radius:14px;padding:18px 20px;margin-top:14px;}
+  a{color:var(--blue);}
+  .links a{display:inline-block;margin-right:18px;}
+  footer{color:var(--muted);font-size:.85em;text-align:center;padding:28px 20px 60px;}
+  code{background:#eef1f5;padding:2px 6px;border-radius:4px;}
+</style>
+</head>
+<body>
+  <div class="hero">
+    <img src="./icon.png" alt="Subscope アイコン">
+    <h1>Subscope</h1>
+    <p>サブスク・固定費を、ひと目で見通す。</p>
+  </div>
+
+  <main>
+    <p>Subscope（サブスコープ）は、サブスクリプションと固定費の支出を「見通す」ためのミニマルな管理アプリです。契約中のサービスを登録するだけで、月額・年額の合計、次の支払日、内訳までひと目で把握できます。</p>
+
+    <h2>主な特長</h2>
+    <ul class="feat">
+      <li>進捗バーで「次の支払いまであと何日」を直感的に表示</li>
+      <li>カレンダーで更新日をまるごと把握</li>
+      <li>月額／年額の合計、カテゴリ別・支払い方法別の内訳をグラフで可視化</li>
+      <li>更新日の数日前にプッシュ通知でリマインド</li>
+      <li>多通貨対応＋為替レート自動取得（円換算で集計）</li>
+      <li>支払い履歴・価格変更履歴を自動で記録</li>
+    </ul>
+
+    <h2 id="support">サポート / お問い合わせ</h2>
+    <div class="card">
+      <p>ご質問・不具合のご報告は、下記メールまでお気軽にどうぞ。</p>
+      <p><code><a href="mailto:SUPPORT_EMAIL_PLACEHOLDER">SUPPORT_EMAIL_PLACEHOLDER</a></code></p>
+    </div>
+
+    <h2>リンク</h2>
+    <p class="links">
+      <a href="./privacy.html">プライバシーポリシー / Privacy Policy</a>
+    </p>
+  </main>
+
+  <footer>© 2026 Subscope</footer>
+</body>
+</html>
