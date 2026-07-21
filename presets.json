@@ -1,0 +1,198 @@
+{
+  "version": "2026-06",
+  "note": "金額は2026年6月時点の目安。プラン改定で変わるため必要に応じて更新してください。currency: JPY/USD, cycle: weekly/monthly/yearly",
+  "presets": [
+    {
+      "name": "Netflix",
+      "symbol": "play.rectangle.fill",
+      "category": "エンタメ",
+      "plans": [
+        { "cycle": "monthly", "currency": "JPY", "amount": 1590 }
+      ]
+    },
+    {
+      "name": "Spotify",
+      "symbol": "music.note",
+      "category": "エンタメ",
+      "plans": [
+        { "cycle": "monthly", "currency": "JPY", "amount": 980 }
+      ]
+    },
+    {
+      "name": "Apple Music",
+      "symbol": "music.note.list",
+      "category": "エンタメ",
+      "plans": [
+        { "cycle": "monthly", "currency": "JPY", "amount": 1080 },
+        { "cycle": "yearly", "currency": "JPY", "amount": 10800 }
+      ]
+    },
+    {
+      "name": "Apple TV+",
+      "symbol": "appletv.fill",
+      "category": "エンタメ",
+      "plans": [
+        { "cycle": "monthly", "currency": "JPY", "amount": 900 },
+        { "cycle": "yearly", "currency": "JPY", "amount": 9000 }
+      ]
+    },
+    {
+      "name": "Amazon Prime",
+      "symbol": "shippingbox.fill",
+      "category": "ライフスタイル",
+      "plans": [
+        { "cycle": "monthly", "currency": "JPY", "amount": 600 },
+        { "cycle": "yearly", "currency": "JPY", "amount": 5900 }
+      ]
+    },
+    {
+      "name": "YouTube Premium",
+      "symbol": "play.circle.fill",
+      "category": "エンタメ",
+      "plans": [
+        { "cycle": "monthly", "currency": "JPY", "amount": 1280 },
+        { "cycle": "yearly", "currency": "JPY", "amount": 12800 }
+      ]
+    },
+    {
+      "name": "Disney+",
+      "symbol": "sparkles.tv.fill",
+      "category": "エンタメ",
+      "plans": [
+        { "cycle": "monthly", "currency": "JPY", "amount": 1250 },
+        { "cycle": "yearly", "currency": "JPY", "amount": 12500 }
+      ]
+    },
+    {
+      "name": "Hulu",
+      "symbol": "tv.fill",
+      "category": "エンタメ",
+      "plans": [
+        { "cycle": "monthly", "currency": "JPY", "amount": 1026 }
+      ]
+    },
+    {
+      "name": "ChatGPT Plus",
+      "symbol": "brain.head.profile",
+      "category": "仕事",
+      "plans": [
+        { "cycle": "monthly", "currency": "USD", "amount": 20 }
+      ]
+    },
+    {
+      "name": "Adobe Creative Cloud",
+      "symbol": "paintbrush.pointed.fill",
+      "category": "仕事",
+      "plans": [
+        { "cycle": "monthly", "currency": "JPY", "amount": 7780 },
+        { "cycle": "yearly", "currency": "JPY", "amount": 86880 }
+      ]
+    },
+    {
+      "name": "Microsoft 365",
+      "symbol": "doc.fill",
+      "category": "仕事",
+      "plans": [
+        { "cycle": "monthly", "currency": "JPY", "amount": 1490 },
+        { "cycle": "yearly", "currency": "JPY", "amount": 14900 }
+      ]
+    },
+    {
+      "name": "Dropbox",
+      "symbol": "tray.full.fill",
+      "category": "仕事",
+      "plans": [
+        { "cycle": "monthly", "currency": "JPY", "amount": 1500 },
+        { "cycle": "yearly", "currency": "JPY", "amount": 14400 }
+      ]
+    },
+    {
+      "name": "iCloud+",
+      "symbol": "icloud.fill",
+      "category": "ライフスタイル",
+      "plans": [
+        { "cycle": "monthly", "currency": "JPY", "amount": 130 }
+      ]
+    },
+    {
+      "name": "家賃",
+      "symbol": "house.fill",
+      "category": "固定費",
+      "plans": [
+        { "cycle": "monthly", "currency": "JPY", "amount": 70000 }
+      ]
+    },
+    {
+      "name": "電気代",
+      "symbol": "bolt.fill",
+      "category": "固定費",
+      "plans": [
+        { "cycle": "monthly", "currency": "JPY", "amount": 8000 }
+      ]
+    },
+    {
+      "name": "ガス代",
+      "symbol": "flame.fill",
+      "category": "固定費",
+      "plans": [
+        { "cycle": "monthly", "currency": "JPY", "amount": 5000 }
+      ]
+    },
+    {
+      "name": "水道代",
+      "symbol": "drop.fill",
+      "category": "固定費",
+      "plans": [
+        { "cycle": "monthly", "currency": "JPY", "amount": 4000 }
+      ]
+    },
+    {
+      "name": "スマホ通信費",
+      "symbol": "iphone",
+      "category": "固定費",
+      "plans": [
+        { "cycle": "monthly", "currency": "JPY", "amount": 3000 }
+      ]
+    },
+    {
+      "name": "光回線",
+      "symbol": "wifi",
+      "category": "固定費",
+      "plans": [
+        { "cycle": "monthly", "currency": "JPY", "amount": 5500 }
+      ]
+    },
+    {
+      "name": "NHK受信料",
+      "symbol": "tv",
+      "category": "固定費",
+      "plans": [
+        { "cycle": "monthly", "currency": "JPY", "amount": 1100 }
+      ]
+    },
+    {
+      "name": "生命保険",
+      "symbol": "cross.case.fill",
+      "category": "固定費",
+      "plans": [
+        { "cycle": "monthly", "currency": "JPY", "amount": 15000 }
+      ]
+    },
+    {
+      "name": "自動車保険",
+      "symbol": "car.fill",
+      "category": "固定費",
+      "plans": [
+        { "cycle": "yearly", "currency": "JPY", "amount": 60000 }
+      ]
+    },
+    {
+      "name": "駐車場",
+      "symbol": "parkingsign",
+      "category": "固定費",
+      "plans": [
+        { "cycle": "monthly", "currency": "JPY", "amount": 10000 }
+      ]
+    }
+  ]
+}
