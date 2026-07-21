@@ -1,6 +1,6 @@
 {
-  "version": "2026-06",
-  "note": "金額は2026年6月時点の目安。プラン改定で変わるため必要に応じて更新してください。currency: JPY/USD, cycle: weekly/monthly/yearly",
+  "version": "2026-07",
+  "note": "金額は2026年7月時点の目安。プラン改定で変わるため必要に応じて更新してください。currency: JPY/USD, cycle: weekly/monthly/yearly",
   "presets": [
     {
       "name": "Netflix",
@@ -15,7 +15,7 @@
       "symbol": "music.note",
       "category": "エンタメ",
       "plans": [
-        { "cycle": "monthly", "currency": "JPY", "amount": 980 }
+        { "cycle": "monthly", "currency": "JPY", "amount": 1080 }
       ]
     },
     {
@@ -23,8 +23,8 @@
       "symbol": "music.note.list",
       "category": "エンタメ",
       "plans": [
-        { "cycle": "monthly", "currency": "JPY", "amount": 1080 },
-        { "cycle": "yearly", "currency": "JPY", "amount": 10800 }
+        { "cycle": "monthly", "currency": "JPY", "amount": 1180 },
+        { "cycle": "yearly", "currency": "JPY", "amount": 11800 }
       ]
     },
     {
@@ -32,8 +32,8 @@
       "symbol": "appletv.fill",
       "category": "エンタメ",
       "plans": [
-        { "cycle": "monthly", "currency": "JPY", "amount": 900 },
-        { "cycle": "yearly", "currency": "JPY", "amount": 9000 }
+        { "cycle": "monthly", "currency": "JPY", "amount": 1200 },
+        { "cycle": "yearly", "currency": "JPY", "amount": 12000 }
       ]
     },
     {
@@ -84,8 +84,8 @@
       "symbol": "paintbrush.pointed.fill",
       "category": "仕事",
       "plans": [
-        { "cycle": "monthly", "currency": "JPY", "amount": 7780 },
-        { "cycle": "yearly", "currency": "JPY", "amount": 86880 }
+        { "cycle": "monthly", "currency": "JPY", "amount": 9080 },
+        { "cycle": "yearly", "currency": "JPY", "amount": 102960 }
       ]
     },
     {
@@ -93,8 +93,8 @@
       "symbol": "doc.fill",
       "category": "仕事",
       "plans": [
-        { "cycle": "monthly", "currency": "JPY", "amount": 1490 },
-        { "cycle": "yearly", "currency": "JPY", "amount": 14900 }
+        { "cycle": "monthly", "currency": "JPY", "amount": 2130 },
+        { "cycle": "yearly", "currency": "JPY", "amount": 21300 }
       ]
     },
     {
@@ -111,7 +111,7 @@
       "symbol": "icloud.fill",
       "category": "ライフスタイル",
       "plans": [
-        { "cycle": "monthly", "currency": "JPY", "amount": 130 }
+        { "cycle": "monthly", "currency": "JPY", "amount": 180 }
       ]
     },
     {
