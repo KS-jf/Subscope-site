@@ -1,6 +1,6 @@
 {
-  "version": "2026-07",
-  "note": "金額は2026年7月時点の目安。プラン改定で変わるため必要に応じて更新してください。currency: JPY/USD, cycle: weekly/monthly/yearly",
+  "version": "2026-08",
+  "note": "金額は2026年8月時点の目安。プラン改定で変わるため必要に応じて更新してください。currency: JPY/USD, cycle: weekly/monthly/yearly",
   "presets": [
     {
       "name": "Netflix",
@@ -72,6 +72,56 @@
       ]
     },
     {
+      "name": "U-NEXT",
+      "symbol": "play.rectangle.fill",
+      "category": "エンタメ",
+      "plans": [
+        { "cycle": "monthly", "currency": "JPY", "amount": 2189 }
+      ]
+    },
+    {
+      "name": "ABEMAプレミアム",
+      "symbol": "play.tv.fill",
+      "category": "エンタメ",
+      "plans": [
+        { "cycle": "monthly", "currency": "JPY", "amount": 1180 }
+      ]
+    },
+    {
+      "name": "DAZN",
+      "symbol": "sportscourt.fill",
+      "category": "エンタメ",
+      "plans": [
+        { "cycle": "monthly", "currency": "JPY", "amount": 4200 },
+        { "cycle": "yearly", "currency": "JPY", "amount": 32000 }
+      ]
+    },
+    {
+      "name": "Amazon Music Unlimited",
+      "symbol": "headphones",
+      "category": "エンタメ",
+      "plans": [
+        { "cycle": "monthly", "currency": "JPY", "amount": 1180 }
+      ]
+    },
+    {
+      "name": "Kindle Unlimited",
+      "symbol": "book.fill",
+      "category": "エンタメ",
+      "plans": [
+        { "cycle": "monthly", "currency": "JPY", "amount": 980 }
+      ]
+    },
+    {
+      "name": "Nintendo Switch Online",
+      "symbol": "gamecontroller.fill",
+      "category": "エンタメ",
+      "plans": [
+        { "cycle": "monthly", "currency": "JPY", "amount": 400 },
+        { "cycle": "yearly", "currency": "JPY", "amount": 3000 }
+      ]
+    },
+    {
       "name": "ChatGPT Plus",
       "symbol": "brain.head.profile",
       "category": "仕事",
@@ -112,6 +162,14 @@
       "category": "ライフスタイル",
       "plans": [
         { "cycle": "monthly", "currency": "JPY", "amount": 180 }
+      ]
+    },
+    {
+      "name": "Google One",
+      "symbol": "externaldrive.fill",
+      "category": "ライフスタイル",
+      "plans": [
+        { "cycle": "monthly", "currency": "JPY", "amount": 290 }
       ]
     },
     {
