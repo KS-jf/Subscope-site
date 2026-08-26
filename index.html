@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Subscope — サブスク・固定費を見通す</title>
-<meta name="description" content="Subscope（サブスコープ）は、サブスクリプションと固定費の支出を「見通す」ためのミニマルな管理アプリです。">
+<meta name="description" content="Subscope（サブスコープ）は、サブスクリプションと固定費の支出を「見通す」ためのミニマルな管理アプリです。支出診断が値上げ・重複・解約どきを自動でチェックします。">
 <style>
   :root{ --blue:#0d47c9; --cyan:#2bd2e4; --ink:#1c1c22; --muted:#6a6c75; }
   *{box-sizing:border-box}
@@ -14,6 +14,23 @@
   .hero img{width:108px;height:108px;border-radius:24px;box-shadow:0 10px 30px rgba(0,0,0,.25);}
   .hero h1{font-size:2.1em;margin:18px 0 6px;letter-spacing:.02em;}
   .hero p{font-size:1.05em;opacity:.95;margin:0;}
+  .hero .cta{margin-top:22px;}
+  .hero .cta a{display:inline-block;background:#fff;color:var(--blue);text-decoration:none;
+       font-weight:700;padding:12px 26px;border-radius:999px;box-shadow:0 6px 18px rgba(0,0,0,.18);}
+
+  /* ヒーローの CTA が画面から外れている間だけ、上部に細いバーを出す。
+     JS が動かない環境では単に出ないだけ（本文は常に読める）。 */
+  .topbar{position:fixed;top:0;left:0;right:0;z-index:50;
+       background:linear-gradient(135deg,var(--blue),var(--cyan));
+       box-shadow:0 2px 12px rgba(0,0,0,.18);
+       display:flex;align-items:center;justify-content:space-between;gap:12px;
+       padding:8px 16px;
+       transform:translateY(-100%);transition:transform .22s ease;}
+  .topbar.show{transform:translateY(0);}
+  .topbar .name{color:#fff;font-weight:700;letter-spacing:.02em;}
+  .topbar a{background:#fff;color:var(--blue);text-decoration:none;font-weight:700;
+       font-size:.9em;padding:7px 16px;border-radius:999px;white-space:nowrap;}
+  @media (prefers-reduced-motion:reduce){ .topbar{transition:none;} }
   main{max-width:720px;margin:0 auto;padding:40px 20px 80px;}
   h2{font-size:1.25em;margin:1.8em 0 .6em;}
   ul.feat{list-style:none;padding:0;margin:0;}
@@ -27,10 +44,16 @@
 </style>
 </head>
 <body>
+  <div class="topbar" id="topbar">
+    <span class="name">Subscope</span>
+    <a href="https://apps.apple.com/jp/app/id6785280296">App Store でダウンロード</a>
+  </div>
+
   <div class="hero">
     <img src="./icon.png" alt="Subscope アイコン">
     <h1>Subscope</h1>
     <p>サブスク・固定費を、ひと目で見通す。</p>
+    <p class="cta"><a href="https://apps.apple.com/jp/app/id6785280296">App Store でダウンロード</a></p>
   </div>
 
   <main>
@@ -38,10 +61,14 @@
 
     <h2>主な特長</h2>
     <ul class="feat">
+      <li>支出診断が、使いすぎ・値上げ・重複・解約どきを自動でチェック（端末内で計算・通信なし）</li>
+      <li>ホーム画面／ロック画面のウィジェットで、開かずに次の支払いを確認</li>
       <li>進捗バーで「次の支払いまであと何日」を直感的に表示</li>
       <li>カレンダーで更新日をまるごと把握</li>
       <li>月額／年額の合計、カテゴリ別・支払い方法別の内訳をグラフで可視化</li>
-      <li>更新日の数日前にプッシュ通知でリマインド</li>
+      <li>電気代など毎回金額が変わる固定費も「目安」で管理。引落日の土日祝ずれにも対応</li>
+      <li>更新日の数日前にプッシュ通知でリマインド（サービスごとにタイミングを個別設定）</li>
+      <li>iCloud同期で iPhone や iPad など複数端末のデータを自動同期</li>
       <li>多通貨対応＋為替レート自動取得（円換算で集計）</li>
       <li>支払い履歴・価格変更履歴を自動で記録</li>
     </ul>
@@ -59,5 +86,30 @@
   </main>
 
   <footer>© 2026 Subscope</footer>
+
+  <script>
+    // ヒーローを過ぎたら上部バーを出す。scroll は passive で登録し、実処理は
+    // requestAnimationFrame で1フレームに1回へ間引く（毎イベントでレイアウトを読まない）。
+    (function () {
+      var bar = document.getElementById('topbar');
+      var hero = document.querySelector('.hero');
+      if (!bar || !hero) return;
+
+      function update() {
+        // ヒーロー下端の少し手前で切り替える（CTA が隠れるのとほぼ同時になる）。
+        var y = window.pageYOffset || document.documentElement.scrollTop || 0;
+        bar.classList.toggle('show', y > hero.offsetHeight - 60);
+      }
+
+      var ticking = false;
+      window.addEventListener('scroll', function () {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () { ticking = false; update(); });
+      }, { passive: true });
+      window.addEventListener('resize', update);
+      update();
+    })();
+  </script>
 </body>
 </html>
