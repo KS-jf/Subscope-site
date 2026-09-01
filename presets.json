@@ -1,6 +1,6 @@
 {
-  "version": "2026-08",
-  "note": "金額は2026年8月時点の目安。プラン改定で変わるため必要に応じて更新してください。currency: JPY/USD, cycle: weekly/monthly/yearly",
+  "version": "2026-09",
+  "note": "金額は2026年9月時点の目安。プラン改定で変わるため必要に応じて更新してください。currency: JPY/USD, cycle: weekly/monthly/yearly",
   "presets": [
     {
       "name": "Netflix",
@@ -88,6 +88,14 @@
       ]
     },
     {
+      "name": "dアニメストア",
+      "symbol": "film.fill",
+      "category": "エンタメ",
+      "plans": [
+        { "cycle": "monthly", "currency": "JPY", "amount": 660 }
+      ]
+    },
+    {
       "name": "DAZN",
       "symbol": "sportscourt.fill",
       "category": "エンタメ",
@@ -122,7 +130,24 @@
       ]
     },
     {
+      "name": "PlayStation Plus",
+      "symbol": "gamecontroller.fill",
+      "category": "エンタメ",
+      "plans": [
+        { "cycle": "monthly", "currency": "JPY", "amount": 850 },
+        { "cycle": "yearly", "currency": "JPY", "amount": 6800 }
+      ]
+    },
+    {
       "name": "ChatGPT Plus",
+      "symbol": "brain.head.profile",
+      "category": "仕事",
+      "plans": [
+        { "cycle": "monthly", "currency": "USD", "amount": 20 }
+      ]
+    },
+    {
+      "name": "Claude Pro",
       "symbol": "brain.head.profile",
       "category": "仕事",
       "plans": [
