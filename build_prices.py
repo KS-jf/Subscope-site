@@ -15,6 +15,7 @@ from __future__ import annotations
 import datetime as dt
 import html
 import json
+import urllib.request
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
@@ -23,6 +24,10 @@ OUT = ROOT / "prices.html"
 SITEMAP = ROOT / "sitemap.xml"
 
 SITE_URL = "https://ks-jf.github.io/Subscope-site/"
+# 対円レートの取得元。アプリ本体（ExchangeRateService）と同じ・キー不要。
+FX_API = "https://open.er-api.com/v6/latest/USD"
+FX_CACHE = Path(__file__).resolve().parent / "fx-rate.json"
+FALLBACK_USD_JPY = 156.0
 APP_STORE_URL = "https://apps.apple.com/jp/app/id6785280296"
 SUPPORT_MAIL = "subscope.app@proton.me"
 
@@ -59,6 +64,30 @@ def money(amount: float, currency: str) -> str:
     return f"{amount:,} {currency}"
 
 
+def usd_jpy() -> tuple[float, str]:
+    """(1米ドルあたりの円, 取得日)。オフラインなら前回値、それも無ければ概算シード。
+
+    ランキングを円で一列に並べるためだけに使う。ページには取得日を明記して
+    「更新時点のレート」であることを示す（為替で順位は前後する）。
+    """
+    try:
+        with urllib.request.urlopen(FX_API, timeout=15) as r:
+            rate = float(json.load(r)["rates"]["JPY"])
+        date = dt.date.today().isoformat()
+        FX_CACHE.write_text(
+            json.dumps({"usd_jpy": rate, "date": date}, ensure_ascii=False, indent=1) + "\n",
+            encoding="utf-8", newline="\n")
+        return rate, date
+    except Exception as e:  # ネットワーク断でもページは生成できるようにする
+        print(f"  ! 為替の取得に失敗（{e}）")
+        if FX_CACHE.exists():
+            d = json.loads(FX_CACHE.read_text(encoding="utf-8"))
+            print(f"  → 前回値 {d['usd_jpy']}（{d['date']}）を使う")
+            return float(d["usd_jpy"]), d["date"]
+        print(f"  → 概算シード {FALLBACK_USD_JPY} を使う")
+        return FALLBACK_USD_JPY, ""
+
+
 def load() -> tuple[str, list[dict]]:
     data = json.loads(SRC.read_text(encoding="utf-8"))
     presets = [p for p in data["presets"] if p.get("category") not in EXCLUDED_CATEGORIES]
@@ -88,15 +117,15 @@ def plan_of(p: dict, cycle: str) -> dict | None:
     return next((x for x in p["plans"] if x["cycle"] == cycle), None)
 
 
-def yearly_saving(p: dict) -> tuple[int, float] | None:
-    """年払いにしたときの年間の差額（円）と割引率。JPY で月額と年額が両方あるときだけ。"""
+def yearly_saving(p: dict) -> tuple[float, float, str] | None:
+    """年払いにしたときの年間の差額・割引率・通貨。月額と年額が同じ通貨で揃うときだけ。"""
     m, y = plan_of(p, "monthly"), plan_of(p, "yearly")
-    if not m or not y or m["currency"] != "JPY" or y["currency"] != "JPY":
+    if not m or not y or m["currency"] != y["currency"]:
         return None
     diff = m["amount"] * 12 - y["amount"]
     if diff <= 0:
         return None
-    return int(round(diff)), diff / (m["amount"] * 12)
+    return diff, diff / (m["amount"] * 12), m["currency"]
 
 
 def version_label(version: str) -> str:
@@ -115,7 +144,8 @@ def render_table(items: list[dict]) -> str:
         if y and not m:
             yearly += f"<br><small class=\"muted\">月あたり {money(y['amount'] / 12, y['currency'])}</small>"
         sv = yearly_saving(p)
-        saving = f"年 {sv[0]:,}円お得<br><small class=\"muted\">約{sv[1]*100:.0f}%引き</small>" if sv else "—"
+        saving = (f"年 {money(sv[0], sv[2])}お得"
+                  f"<br><small class=\"muted\">約{sv[1]*100:.0f}%引き</small>") if sv else "—"
         # 値が無いセルはカード表示（狭い画面）では消す。"—" だけの行が並ぶと読みにくいため。
         def cell(value: str, label: str) -> str:
             cls = "num empty" if value == "—" else "num"
@@ -147,30 +177,44 @@ def group_total(items: list[dict]) -> str | None:
     return f"{len(jpy)}サービスすべて契約すると月 {total:,}円（年 {total*12:,}円）"
 
 
-def render_savings_ranking(presets: list[dict]) -> str:
+def render_savings_ranking(presets: list[dict], rate: float, rate_date: str) -> str:
+    """差額の大きい順に並べる。米ドル建ては円に換算して同じ列に載せる。
+
+    為替は生成時点の値で固定される（ページに取得日を明記する）。順位は為替でも動く。
+    """
     ranked = []
     for p in presets:
         sv = yearly_saving(p)
-        if sv:
-            ranked.append((sv[0], sv[1], p["name"]))
-    ranked.sort(reverse=True)
+        if not sv:
+            continue
+        diff, ratio, cur = sv
+        jpy = diff if cur == "JPY" else diff * rate
+        label = f"年 {money(diff, cur)}お得（約{ratio*100:.0f}%）"
+        if cur != "JPY":
+            label += f"<br><small class=\"muted\">約 {int(round(jpy)):,}円</small>"
+        ranked.append((jpy, label, p["name"]))
+    ranked.sort(key=lambda x: -x[0])
     if not ranked:
         return ""
     lis = "".join(
-        f"<li><span class=\"name\">{esc(n)}</span>"
-        f"<span class=\"val\">年 {d:,}円お得（約{r*100:.0f}%）</span></li>"
-        for d, r, n in ranked
+        f"<li><span class=\"name\">{esc(n)}</span><span class=\"val\">{label}</span></li>"
+        for _, label, n in ranked
     )
+    fx = (f"米ドル建てのサービスは 1米ドル＝{rate:.1f}円"
+          f"{f'（{rate_date} 時点）' if rate_date else ''}で円に換算して並べています。"
+          "為替は日々動くので、円換算の額と順位はこのページを更新した時点のものです。")
     return (
         "<h2 id=\"yearly\">年払いにすると、いくら安くなるか</h2>"
-        "<p>月額プランと年額プランの両方がある円建てサービスを、年払いにしたときの差額が大きい順に並べています。"
+        "<p>月額プランと年額プランの両方があるサービスを、年払いにしたときの差額が大きい順に並べています。"
         "1年以上続ける確信があるサービスは年払いに切り替える余地があります。"
         "逆に、いつ解約するか分からないサービスは月払いのままの方が損をしにくいです。</p>"
+        f"<p class=\"muted\" style=\"font-size:.9em;\">{fx}</p>"
         f"<ol class=\"rank\">{lis}</ol>"
     )
 
 
-def render_page(version: str, presets: list[dict], today: dt.date) -> str:
+def render_page(version: str, presets: list[dict], today: dt.date,
+                rate: float, rate_date: str) -> str:
     label = version_label(version)
     groups = group_presets(presets)
     n = len(presets)
@@ -304,7 +348,7 @@ def render_page(version: str, presets: list[dict], today: dt.date) -> str:
 
     {''.join(sections)}
 
-    {render_savings_ranking(presets)}
+    {render_savings_ranking(presets, rate, rate_date)}
 
     <h2 id="about">このデータについて</h2>
     <div class="card note">
@@ -312,7 +356,7 @@ def render_page(version: str, presets: list[dict], today: dt.date) -> str:
         <li>価格は <strong>{esc(label)}時点</strong>の公式サイトの表示にもとづく目安です。プラン改定やキャンペーンで変わることがあるため、契約前に必ず公式サイトでご確認ください。</li>
         <li>円建ての金額は税込表示です。US ドル建て（ChatGPT・Claude など）は公式の税抜価格に消費税 10% を加えた金額を載せています。実際の円での請求額は、支払い時点の為替レートとカード会社の手数料で変わります。</li>
         <li>複数プランがあるサービスは、個人向けの標準プラン（広告なし・1人用など）を代表値にしています。</li>
-        <li>「年払いの割引」は「月額 × 12 − 年額」で計算しています。</li>
+        <li>「年払いの割引」は「月額 × 12 − 年額」で計算しています。米ドル建てのサービスはドルのまま表示し、割引ランキングでのみ円に換算しています（換算レートは上記のとおり更新時点の値）。</li>
         <li>誤りに気づかれた場合は <a href="mailto:{SUPPORT_MAIL}">{SUPPORT_MAIL}</a> までお知らせください。</li>
       </ul>
       <p class="muted" style="margin:6px 0 0;font-size:.85em;">最終更新: {today.isoformat()}</p>
@@ -355,9 +399,12 @@ def render_sitemap(today: dt.date) -> str:
 def main() -> None:
     version, presets = load()
     today = dt.date.today()
-    OUT.write_text(render_page(version, presets, today), encoding="utf-8", newline="\n")
+    rate, rate_date = usd_jpy()
+    OUT.write_text(render_page(version, presets, today, rate, rate_date),
+                   encoding="utf-8", newline="\n")
     SITEMAP.write_text(render_sitemap(today), encoding="utf-8", newline="\n")
-    print(f"wrote {OUT.name} ({len(presets)} services, data {version}) and {SITEMAP.name}")
+    print(f"wrote {OUT.name} ({len(presets)} services, data {version}, "
+          f"USD/JPY {rate:.2f}) and {SITEMAP.name}")
 
 
 if __name__ == "__main__":
