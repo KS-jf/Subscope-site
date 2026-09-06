@@ -1,6 +1,6 @@
 {
   "version": "2026-09",
-  "note": "金額は2026年9月時点の目安。プラン改定で変わるため必要に応じて更新してください。currency: JPY/USD, cycle: weekly/monthly/yearly",
+  "note": "金額は2026年9月時点の目安。すべて税込（消費税10%）で統一する。日本のサービスは総額表示義務があるため表示価格がそのまま税込だが、USD建て（ChatGPT/Claude等）は公式が税抜表示なので+10%して入れること。家賃・保険料は非課税。プラン改定で変わるため必要に応じて更新してください。currency: JPY/USD, cycle: weekly/monthly/yearly",
   "presets": [
     {
       "name": "Netflix",
@@ -143,7 +143,7 @@
       "symbol": "brain.head.profile",
       "category": "仕事",
       "plans": [
-        { "cycle": "monthly", "currency": "USD", "amount": 20 }
+        { "cycle": "monthly", "currency": "USD", "amount": 22 }
       ]
     },
     {
@@ -151,7 +151,24 @@
       "symbol": "brain.head.profile",
       "category": "仕事",
       "plans": [
-        { "cycle": "monthly", "currency": "USD", "amount": 20 }
+        { "cycle": "monthly", "currency": "USD", "amount": 22 },
+        { "cycle": "yearly", "currency": "USD", "amount": 220 }
+      ]
+    },
+    {
+      "name": "Claude Max x5",
+      "symbol": "brain.head.profile",
+      "category": "仕事",
+      "plans": [
+        { "cycle": "monthly", "currency": "USD", "amount": 110 }
+      ]
+    },
+    {
+      "name": "Claude Max x20",
+      "symbol": "brain.head.profile",
+      "category": "仕事",
+      "plans": [
+        { "cycle": "monthly", "currency": "USD", "amount": 220 }
       ]
     },
     {
