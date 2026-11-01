@@ -9,6 +9,7 @@ presets.json を更新したら（月次価格チェックのたびに）これ�
 - 「固定費」カテゴリ（家賃・電気代など）は料金ではなく入力の目安なので載せない。
 - 金額は presets.json の方針どおり税込。USD 建ては公式の税抜価格 +10% が入っている。
 - 年払いプランがあるサービスは「年払いにすると年いくら安いか」を算出する。
+- 値上げの記録は PRICE_HIKES（presets.json の金額を上げた時に1行足す）。年ごとの表にして載せる。
 """
 from __future__ import annotations
 
@@ -49,6 +50,38 @@ GROUP_ORDER = list(GROUP_OF)
 EXCLUDED_CATEGORIES = {"固定費"}
 
 CYCLE_LABEL = {"weekly": "週", "monthly": "月", "yearly": "年"}
+
+# 値上げの記録（施行日の新しい順）。月次の価格チェックで presets.json の金額を上げたら、ここへ1行足す。
+# - date: 新規加入者に新価格が適用される日（既存会員の切り替え日は note に）
+# - monthly / yearly: (旧, 新)。旧は更新前の presets.json（git 履歴）か出典の旧価格。出典で確かめられた物だけ載せる
+# - source: (表示名と記事の日付, URL)。公式発表か、それを伝えた報道
+# - 税込に揃えただけの変更（ChatGPT / Claude の US$20→22・2026-09）は値上げではないので載せない
+# 新価格が現在の presets.json と食い違うと build 時に警告する（載せ忘れ・直し忘れの検知）。
+PRICE_HIKES = [
+    {"name": "Hulu", "date": "2026-10-01", "monthly": (1026, 1320),
+     "note": "既存会員は 10/1 以降の最初の請求日から",
+     "source": ("Selectra（2026-10-19 更新）", "https://selectra.jp/streaming/news/hulu-price-increase-2026")},
+    {"name": "Apple Music", "date": "2026-07-18", "monthly": (1080, 1180), "yearly": (10800, 11800),
+     "note": "個人プラン",
+     "source": ("gori.me 2026-07-18", "https://gori.me/?p=168213")},
+    {"name": "Apple TV+", "date": "2026-07-18", "monthly": (900, 1200),
+     "source": ("gori.me 2026-07-18", "https://gori.me/?p=168213")},
+    {"name": "iCloud+", "date": "2026-07-18", "monthly": (150, 180),
+     "note": "50GB プラン",
+     "source": ("gori.me 2026-07-18", "https://gori.me/?p=168213")},
+    {"name": "Disney+", "date": "2026-03-25", "monthly": (1140, 1250), "yearly": (11400, 12500),
+     "note": "スタンダード。既存会員は 5/1 以降の請求分から",
+     "source": ("AV Watch 2026-03-09", "https://av.watch.impress.co.jp/docs/news/2091781.html")},
+    {"name": "Spotify", "date": "2025-08-04", "monthly": (980, 1080),
+     "note": "Standard。既存会員は 9 月の請求日から",
+     "source": ("アプリオ 2025-08-05", "https://appllio.com/news/2025-08-05-66296-spotify-premium-price-revision")},
+    {"name": "Adobe Creative Cloud", "date": "2025-08-01", "monthly": (7780, 9080),
+     "note": "年間プラン月々払い。コンプリートプランが Creative Cloud Pro に改称",
+     "source": ("デジカメ Watch 2025-07-14", "https://dc.watch.impress.co.jp/docs/news/saleitem/2031006.html")},
+    {"name": "Microsoft 365", "date": "2025-01-16", "monthly": (1490, 2130), "yearly": (14900, 21300),
+     "note": "Personal。Copilot の追加に合わせた改定",
+     "source": ("Impress Watch 2025-01-17", "https://www.watch.impress.co.jp/docs/news/1654780.html")},
+]
 
 
 def esc(s: str) -> str:
@@ -213,6 +246,97 @@ def render_savings_ranking(presets: list[dict], rate: float, rate_date: str) -> 
     )
 
 
+def check_hikes(presets: list[dict]) -> None:
+    """PRICE_HIKES の新価格が今の presets.json と一致するか。ずれていれば警告して続ける。"""
+    by_name = {p["name"]: p for p in presets}
+    for h in PRICE_HIKES:
+        p = by_name.get(h["name"])
+        if not p:
+            print(f"  ! 値上げ一覧: {h['name']} が presets.json に無い")
+            continue
+        for cycle in ("monthly", "yearly"):
+            if cycle not in h:
+                continue
+            plan = plan_of(p, cycle)
+            if not plan or plan["amount"] != h[cycle][1]:
+                print(f"  ! 値上げ一覧: {h['name']} の{CYCLE_LABEL[cycle]}額 {h[cycle][1]} が presets.json"
+                      f"（{plan['amount'] if plan else '無し'}）と違う")
+
+
+def render_hike_table(items: list[dict]) -> str:
+    rows = []
+    for h in items:
+        om, nm = h["monthly"]
+        up = nm - om
+        monthly = f"{money(om, 'JPY')} → <strong>{money(nm, 'JPY')}</strong>"
+        rise = f"+{money(up, 'JPY')}<br><small class=\"muted\">約{up / om * 100:.0f}%</small>"
+        if "yearly" in h:
+            oy, ny = h["yearly"]
+            yearly = f"{money(oy, 'JPY')} → <strong>{money(ny, 'JPY')}</strong>"
+        else:
+            yearly = "—"
+        y, m, d = h["date"].split("-")
+        date = f"{int(m)}/{int(d)}"
+        if h.get("note"):
+            date += f"<br><small class=\"muted\">{esc(h['note'])}</small>"
+        src_label, src_url = h["source"]
+        src = f"<a href=\"{esc(src_url)}\" rel=\"noopener\" target=\"_blank\">{esc(src_label)}</a>"
+
+        def cell(value: str, label: str, num: bool = True) -> str:
+            cls = ("num " if num else "") + ("empty" if value == "—" else "")
+            return f"<td class=\"{cls.strip()}\" data-label=\"{label}\">{value}</td>"
+
+        rows.append(
+            "<tr>"
+            f"<th scope=\"row\">{esc(h['name'])}</th>"
+            + cell(date, "施行日", num=False)
+            + cell(monthly, "月額（旧 → 新）")
+            + cell(rise, "上げ幅")
+            + cell(yearly, "年額（旧 → 新）")
+            + cell(src, "出典", num=False)
+            + "</tr>"
+        )
+    return (
+        "<div class=\"tablewrap\"><table class=\"hikes\">"
+        "<thead><tr><th scope=\"col\">サービス</th><th scope=\"col\">施行日</th>"
+        "<th scope=\"col\">月額（旧 → 新）</th><th scope=\"col\">上げ幅</th>"
+        "<th scope=\"col\">年額（旧 → 新）</th><th scope=\"col\">出典</th></tr></thead>"
+        f"<tbody>{''.join(rows)}</tbody></table></div>"
+    )
+
+
+def render_price_hikes(today: dt.date) -> str:
+    """値上げの記録を年ごとの表にする。今年（記録が無ければ最新の年）を h2、それより前の年を h3 で続ける。"""
+    if not PRICE_HIKES:
+        return ""
+    hikes = sorted(PRICE_HIKES, key=lambda h: h["date"], reverse=True)
+    years = sorted({int(h["date"][:4]) for h in hikes}, reverse=True)
+    head_year = today.year if today.year in years else years[0]
+    parts = [
+        f"<h2 id=\"hikes\">{head_year}年の値上げ一覧</h2>",
+        "<p>このページに載せているサービスのうち、料金が上がったものを施行日の新しい順に並べています。"
+        "「施行日」は新規加入者に新料金が適用される日で、すでに契約している人は次回以降の請求日から切り替わるのが一般的です"
+        "（切り替え日が公表されているものは施行日の下に書いています）。"
+        "月額は個人向けの標準プラン・税込です。</p>",
+    ]
+    for y in years:
+        items = [h for h in hikes if int(h["date"][:4]) == y]
+        if y != head_year:
+            parts.append(f"<h3>{y}年の値上げ</h3>")
+        parts.append(render_hike_table(items))
+        total = sum(h["monthly"][1] - h["monthly"][0] for h in items)
+        if len(items) >= 2:
+            parts.append(
+                f"<p class=\"total\">{len(items)}サービスをすべて契約していると、"
+                f"{y}年の値上げで月 {total:,}円（年 {total * 12:,}円）の負担増</p>")
+    parts.append(
+        "<p class=\"muted\" style=\"font-size:.9em;\">"
+        "旧価格は値上げ前にこのページ（アプリの料金プリセット）に載せていた金額、新価格は現在の表と同じです。"
+        "施行日と価格は出典の記事で確認しています。契約中のサービスが値上げされると、Subscope は登録した金額との差を"
+        "「値上げ検知」として知らせます。</p>")
+    return "".join(parts)
+
+
 def render_page(version: str, presets: list[dict], today: dt.date,
                 rate: float, rate_date: str) -> str:
     label = version_label(version)
@@ -220,6 +344,7 @@ def render_page(version: str, presets: list[dict], today: dt.date,
     n = len(presets)
 
     nav = " ／ ".join(f"<a href=\"#g{i}\">{esc(g)}</a>" for i, (g, _) in enumerate(groups))
+    hikes = render_price_hikes(today)
 
     sections = []
     for i, (g, items) in enumerate(groups):
@@ -233,7 +358,7 @@ def render_page(version: str, presets: list[dict], today: dt.date,
     title = f"サブスク料金一覧（{label}・税込）主要{n}サービスの月額・年額と年払い割引"
     description = (
         f"Netflix・Spotify・YouTube Premium・ChatGPT など主要{n}サービスの料金を{label}時点の税込価格で一覧化。"
-        "月額・年額・年払いにしたときの割引額も掲載。毎月更新。"
+        "月額・年額・年払いにしたときの割引額、値上げしたサービスの新旧価格も掲載。毎月更新。"
     )
 
     return f"""<!DOCTYPE html>
@@ -282,6 +407,9 @@ def render_page(version: str, presets: list[dict], today: dt.date,
   a{{color:var(--blue);}}
   .tablewrap{{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid #e7ebf1;border-radius:12px;}}
   table{{border-collapse:collapse;width:100%;min-width:500px;font-size:.95em;}}
+  table.hikes{{min-width:700px;}}
+  table.hikes td.num{{white-space:normal;}}
+  h3{{font-size:1.05em;margin:1.6em 0 .5em;color:var(--muted);}}
   th,td{{padding:10px 12px;border-bottom:1px solid #eee;text-align:left;vertical-align:top;}}
   thead th{{background:#f6f8fb;font-weight:700;font-size:.88em;color:var(--muted);white-space:nowrap;}}
   tbody th{{font-weight:600;white-space:nowrap;}}
@@ -344,11 +472,13 @@ def render_page(version: str, presets: list[dict], today: dt.date,
     金額はすべて<strong>税込</strong>で、個人向けの標準プランを掲載しています。
     このデータは、サブスク管理アプリ <a href="./">Subscope</a> がサービス登録時に自動入力する料金プリセットと同じものです。</p>
 
-    <p class="nav">{nav} ／ <a href="#yearly">年払いの割引ランキング</a></p>
+    <p class="nav">{nav} ／ <a href="#yearly">年払いの割引ランキング</a>{' ／ <a href="#hikes">値上げ一覧</a>' if hikes else ''}</p>
 
     {''.join(sections)}
 
     {render_savings_ranking(presets, rate, rate_date)}
+
+    {hikes}
 
     <h2 id="about">このデータについて</h2>
     <div class="card note">
@@ -399,6 +529,7 @@ def render_sitemap(today: dt.date) -> str:
 def main() -> None:
     version, presets = load()
     today = dt.date.today()
+    check_hikes(presets)
     rate, rate_date = usd_jpy()
     OUT.write_text(render_page(version, presets, today, rate, rate_date),
                    encoding="utf-8", newline="\n")
