@@ -1,6 +1,6 @@
 {
-  "version": "2026-10",
-  "note": "金額は2026年10月時点の目安。すべて税込（消費税10%）で統一する。日本のサービスは総額表示義務があるため表示価格がそのまま税込だが、USD建て（ChatGPT/Claude等）は公式が税抜表示なので+10%して入れること。家賃・保険料は非課税。プラン改定で変わるため必要に応じて更新してください。currency: JPY/USD, cycle: weekly/monthly/yearly",
+  "version": "2026-11",
+  "note": "金額は2026年11月時点の目安。すべて税込（消費税10%）で統一する。日本のサービスは総額表示義務があるため表示価格がそのまま税込だが、USD建て（ChatGPT/Claude等）は公式が税抜表示なので+10%して入れること。家賃・保険料は非課税。プラン改定で変わるため必要に応じて更新してください。currency: JPY/USD, cycle: weekly/monthly/yearly。formerNames: 改名前の名前（サービスが改名したら name を新しい名前にし、旧名をここへ入れる。アプリは旧名で保存された既存サブスクの編集画面でお知らせを出し、プリセット検索でも照合する。古い版のアプリは読み飛ばす）",
   "presets": [
     {
       "name": "Netflix",
@@ -113,7 +113,8 @@
       ]
     },
     {
-      "name": "Kindle Unlimited",
+      "name": "Kindle+",
+      "formerNames": ["Kindle Unlimited"],
       "symbol": "book.fill",
       "category": "エンタメ",
       "plans": [
@@ -156,7 +157,8 @@
       ]
     },
     {
-      "name": "Claude Max x5",
+      "name": "Claude Max",
+      "formerNames": ["Claude Max x5"],
       "symbol": "brain.head.profile",
       "category": "仕事",
       "plans": [
@@ -164,7 +166,8 @@
       ]
     },
     {
-      "name": "Claude Max x20",
+      "name": "Claude Ultra",
+      "formerNames": ["Claude Max x20"],
       "symbol": "brain.head.profile",
       "category": "仕事",
       "plans": [

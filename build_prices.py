@@ -40,9 +40,9 @@ GROUP_OF = {
         "ABEMAプレミアム", "dアニメストア", "DAZN",
     ],
     "音楽": ["Spotify", "Apple Music", "Amazon Music Unlimited"],
-    "電子書籍": ["Kindle Unlimited"],
+    "電子書籍": ["Kindle+"],
     "ゲーム": ["Nintendo Switch Online", "PlayStation Plus"],
-    "AI アシスタント": ["ChatGPT Plus", "Claude Pro", "Claude Max x5", "Claude Max x20"],
+    "AI アシスタント": ["ChatGPT Plus", "Claude Pro", "Claude Max", "Claude Ultra"],
     "仕事・クリエイティブ": ["Adobe Creative Cloud", "Microsoft 365", "Dropbox"],
     "ストレージ・ショッピング": ["iCloud+", "Google One", "Amazon Prime"],
 }
