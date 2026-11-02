@@ -1,6 +1,6 @@
 {
-  "version": "2026-10",
-  "note": "金額は2026年10月時点の目安。すべて税込（消費税10%）で統一する。日本のサービスは総額表示義務があるため表示価格がそのまま税込だが、USD建て（ChatGPT/Claude等）は公式が税抜表示なので+10%して入れること。家賃・保険料は非課税。プラン改定で変わるため必要に応じて更新してください。currency: JPY/USD, cycle: weekly/monthly/yearly",
+  "version": "2026-11",
+  "note": "金額は2026年11月時点の目安。すべて税込（消費税10%）で統一する。日本のサービスは総額表示義務があるため表示価格がそのまま税込だが、USD建て（ChatGPT/Claude等）は公式が税抜表示なので+10%して入れること。家賃・保険料は非課税。プラン改定で変わるため必要に応じて更新してください。currency: JPY/USD, cycle: weekly/monthly/yearly。formerNames: 改名前の名前（サービスが改名したら name を新しい名前にし、旧名をここへ入れる。アプリは旧名で保存された既存サブスクの編集画面でお知らせを出し、プリセット検索でも照合する。古い版のアプリは読み飛ばす）。priceHistory: 値上げの記録（effectiveDate=新価格の施行日・cycle・currency・oldAmount→newAmount・source=出典。月次の価格チェックで金額を上げたら 1 行足す。アプリは登録額が旧価格のままの既存サブスクに一覧と編集画面で「値上げされたようです」と知らせ、1 回押せば今の価格に直せる。サイト Subscope-site の presets.json にも同じ物を入れること＝アプリはリモートの物を優先して読む）",
   "presets": [
     {
       "name": "Netflix",
@@ -16,6 +16,9 @@
       "category": "エンタメ",
       "plans": [
         { "cycle": "monthly", "currency": "JPY", "amount": 1080 }
+      ],
+      "priceHistory": [
+        { "effectiveDate": "2025-08-04", "cycle": "monthly", "currency": "JPY", "oldAmount": 980, "newAmount": 1080, "source": "アプリオ 2025-08-05 https://appllio.com/news/2025-08-05-66296-spotify-premium-price-revision" }
       ]
     },
     {
@@ -25,6 +28,10 @@
       "plans": [
         { "cycle": "monthly", "currency": "JPY", "amount": 1180 },
         { "cycle": "yearly", "currency": "JPY", "amount": 11800 }
+      ],
+      "priceHistory": [
+        { "effectiveDate": "2026-07-18", "cycle": "monthly", "currency": "JPY", "oldAmount": 1080, "newAmount": 1180, "source": "gori.me 2026-07-18 https://gori.me/?p=168213" },
+        { "effectiveDate": "2026-07-18", "cycle": "yearly", "currency": "JPY", "oldAmount": 10800, "newAmount": 11800, "source": "gori.me 2026-07-18 https://gori.me/?p=168213" }
       ]
     },
     {
@@ -34,6 +41,9 @@
       "plans": [
         { "cycle": "monthly", "currency": "JPY", "amount": 1200 },
         { "cycle": "yearly", "currency": "JPY", "amount": 12000 }
+      ],
+      "priceHistory": [
+        { "effectiveDate": "2026-07-18", "cycle": "monthly", "currency": "JPY", "oldAmount": 900, "newAmount": 1200, "source": "gori.me 2026-07-18 https://gori.me/?p=168213" }
       ]
     },
     {
@@ -61,6 +71,10 @@
       "plans": [
         { "cycle": "monthly", "currency": "JPY", "amount": 1250 },
         { "cycle": "yearly", "currency": "JPY", "amount": 12500 }
+      ],
+      "priceHistory": [
+        { "effectiveDate": "2026-03-25", "cycle": "monthly", "currency": "JPY", "oldAmount": 1140, "newAmount": 1250, "source": "AV Watch 2026-03-09 https://av.watch.impress.co.jp/docs/news/2091781.html" },
+        { "effectiveDate": "2026-03-25", "cycle": "yearly", "currency": "JPY", "oldAmount": 11400, "newAmount": 12500, "source": "AV Watch 2026-03-09 https://av.watch.impress.co.jp/docs/news/2091781.html" }
       ]
     },
     {
@@ -69,6 +83,9 @@
       "category": "エンタメ",
       "plans": [
         { "cycle": "monthly", "currency": "JPY", "amount": 1320 }
+      ],
+      "priceHistory": [
+        { "effectiveDate": "2026-10-01", "cycle": "monthly", "currency": "JPY", "oldAmount": 1026, "newAmount": 1320, "source": "Selectra 2026-10-19 https://selectra.jp/streaming/news/hulu-price-increase-2026" }
       ]
     },
     {
@@ -113,7 +130,8 @@
       ]
     },
     {
-      "name": "Kindle Unlimited",
+      "name": "Kindle+",
+      "formerNames": ["Kindle Unlimited"],
       "symbol": "book.fill",
       "category": "エンタメ",
       "plans": [
@@ -156,7 +174,8 @@
       ]
     },
     {
-      "name": "Claude Max x5",
+      "name": "Claude Max",
+      "formerNames": ["Claude Max x5"],
       "symbol": "brain.head.profile",
       "category": "仕事",
       "plans": [
@@ -164,7 +183,8 @@
       ]
     },
     {
-      "name": "Claude Max x20",
+      "name": "Claude Ultra",
+      "formerNames": ["Claude Max x20"],
       "symbol": "brain.head.profile",
       "category": "仕事",
       "plans": [
@@ -178,6 +198,9 @@
       "plans": [
         { "cycle": "monthly", "currency": "JPY", "amount": 9080 },
         { "cycle": "yearly", "currency": "JPY", "amount": 102960 }
+      ],
+      "priceHistory": [
+        { "effectiveDate": "2025-08-01", "cycle": "monthly", "currency": "JPY", "oldAmount": 7780, "newAmount": 9080, "source": "デジカメ Watch 2025-07-14 https://dc.watch.impress.co.jp/docs/news/saleitem/2031006.html" }
       ]
     },
     {
@@ -187,6 +210,10 @@
       "plans": [
         { "cycle": "monthly", "currency": "JPY", "amount": 2130 },
         { "cycle": "yearly", "currency": "JPY", "amount": 21300 }
+      ],
+      "priceHistory": [
+        { "effectiveDate": "2025-01-16", "cycle": "monthly", "currency": "JPY", "oldAmount": 1490, "newAmount": 2130, "source": "Impress Watch 2025-01-17 https://www.watch.impress.co.jp/docs/news/1654780.html" },
+        { "effectiveDate": "2025-01-16", "cycle": "yearly", "currency": "JPY", "oldAmount": 14900, "newAmount": 21300, "source": "Impress Watch 2025-01-17 https://www.watch.impress.co.jp/docs/news/1654780.html" }
       ]
     },
     {
@@ -204,6 +231,9 @@
       "category": "ライフスタイル",
       "plans": [
         { "cycle": "monthly", "currency": "JPY", "amount": 180 }
+      ],
+      "priceHistory": [
+        { "effectiveDate": "2026-07-18", "cycle": "monthly", "currency": "JPY", "oldAmount": 150, "newAmount": 180, "source": "gori.me 2026-07-18 https://gori.me/?p=168213" }
       ]
     },
     {
