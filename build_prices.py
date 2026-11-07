@@ -472,7 +472,7 @@ def render_page(version: str, presets: list[dict], today: dt.date,
     金額はすべて<strong>税込</strong>で、個人向けの標準プランを掲載しています。
     このデータは、サブスク管理アプリ <a href="./">Subscope</a> がサービス登録時に自動入力する料金プリセットと同じものです。</p>
 
-    <p class="nav">{nav} ／ <a href="#yearly">年払いの割引ランキング</a>{' ／ <a href="#hikes">値上げ一覧</a>' if hikes else ''} ／ <a href="./trials.html">無料体験の解約期限</a></p>
+    <p class="nav">{nav} ／ <a href="#yearly">年払いの割引ランキング</a>{' ／ <a href="#hikes">値上げ一覧</a>' if hikes else ''} ／ <a href="./trials.html">無料体験の解約期限</a> ／ <a href="./cancel.html">解約方法</a></p>
 
     {''.join(sections)}
 
@@ -484,6 +484,12 @@ def render_page(version: str, presets: list[dict], today: dt.date,
     <div class="card">
       <p>主要サービスの無料体験（お試し）の長さと、「30日間」「1か月」の数え方、課金されない解約期限を登録日から逆算する計算機をまとめました。無料体験が無いサービス（Netflix・Hulu・Disney+ など）も明記しています。</p>
       <p><a href="./trials.html"><strong>無料体験の解約期限 早見表を見る →</strong></a></p>
+    </div>
+
+    <h2 id="cancel">解約はどこからする？</h2>
+    <div class="card">
+      <p>サービスのサイトで解約するのか、App Store / Google Play の定期購入から解約するのかはサービスと登録した経路で変わります。主要サービスの解約の窓口と、公式の解約ページへのリンク（確認日つき）、解約後いつまで使えるか・年払いの注意をまとめました。</p>
+      <p><a href="./cancel.html"><strong>解約方法の早見表を見る →</strong></a></p>
     </div>
 
     <h2 id="about">このデータについて</h2>
@@ -506,16 +512,16 @@ def render_page(version: str, presets: list[dict], today: dt.date,
   </main>
 
   <footer>
-    <a href="./">Subscope トップ</a><a href="./trials.html">無料体験の解約期限</a><a href="./privacy.html">プライバシーポリシー</a><br>© 2026 Subscope
+    <a href="./">Subscope トップ</a><a href="./trials.html">無料体験の解約期限</a><a href="./cancel.html">解約方法</a><a href="./privacy.html">プライバシーポリシー</a><br>© 2026 Subscope
   </footer>
 </body>
 </html>
 """
 
 
-def trials_checked() -> str | None:
-    """trials.json（無料体験の早見表）の確認日。無ければ None（sitemap に lastmod を書かない）。"""
-    p = ROOT / "trials.json"
+def checked_of(name: str) -> str | None:
+    """trials.json / cancel.json（早見表のデータ）の確認日。無ければ None（sitemap に lastmod を書かない）。"""
+    p = ROOT / name
     if not p.exists():
         return None
     try:
@@ -528,7 +534,8 @@ def render_sitemap(today: dt.date) -> str:
     urls = [
         ("", None),
         ("prices.html", today.isoformat()),
-        ("trials.html", trials_checked()),
+        ("trials.html", checked_of("trials.json")),
+        ("cancel.html", checked_of("cancel.json")),
         ("privacy.html", None),
     ]
     body = ""
