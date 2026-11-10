@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>サブスクの支出診断（Web 版）｜月額合計を入れるだけで平均との比較・見直しの目安・年額換算｜Subscope</title>
+<meta name="description" content="サブスクの月額合計・固定費・手取りの 3 つを入れるだけで、調査の平均との比較、見直しの目安（iPhone アプリ Subscope の支出診断と同じしきい値）、年額換算をその場で出す無料の診断ページ。入力はブラウザの中だけで計算し、どこにも送らず保存もしません。">
+<link rel="canonical" href="https://ks-jf.github.io/Subscope-site/diagnosis.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="サブスクの支出診断（Web 版）｜月額合計を入れるだけで平均との比較・見直しの目安・年額換算">
+<meta property="og:description" content="サブスクの月額合計・固定費・手取りの 3 つを入れるだけで、調査の平均との比較、見直しの目安、年額換算をその場で出す無料の診断ページ。入力はブラウザの中だけで計算し、どこにも送りません。">
+<meta property="og:url" content="https://ks-jf.github.io/Subscope-site/diagnosis.html">
+<meta property="og:image" content="https://ks-jf.github.io/Subscope-site/icon.png">
+<meta property="og:site_name" content="Subscope">
+<meta name="twitter:card" content="summary">
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "WebApplication",
+ "name": "サブスクの支出診断（Web 版）",
+ "url": "https://ks-jf.github.io/Subscope-site/diagnosis.html",
+ "applicationCategory": "FinanceApplication",
+ "operatingSystem": "Any",
+ "browserRequirements": "Requires JavaScript",
+ "inLanguage": "ja",
+ "offers": { "@type": "Offer", "price": "0", "priceCurrency": "JPY" },
+ "description": "サブスクの月額合計・固定費・手取りの 3 つを入れるだけで、調査の平均との比較、見直しの目安、年額換算をその場で出す無料の診断ページ。入力はブラウザの中だけで計算し、どこにも送りません。",
+ "author": { "@type": "Organization", "name": "Subscope" }
+}
+</script>
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "FAQPage",
+ "mainEntity": [
+  {
+   "@type": "Question",
+   "name": "サブスクの月額は平均いくらですか？",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "2025 年 7〜8 月の調査（ゼニエモン・10 代以上 400 名）では、毎月のサブスク料金の合計で最も多い回答は「2,000 円以下」でした。また 2026 年 4 月の調査（NilCraft・20〜59 歳 300 名）では、使っていないのに課金を放置した経験のある人が 53.0% で、放置していたサブスクの月額合計は平均で約 3,600 円（年換算で約 43,000 円）でした。"
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "見直しの目安はどう決めていますか？",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "iPhone アプリ Subscope の支出診断と同じ基準です。サブスク 1 件の年額が、固定費を含めた支出全体の年額の 10% 以上かつ 12,000 円以上なら「要注意」、4% 以上かつ 3,600 円以上なら「注目」、それ未満は目安の範囲内と判定します。絶対額だけで切ると登録の規模によって外れるので、割合と実額の両方で見ます。"
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "入力した金額はどこかに送られますか？",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "送られません。計算はすべてブラウザの中（JavaScript）で行い、サーバーへの送信も、Cookie やブラウザへの保存もしません。ページを閉じると入力は消えます。"
+   }
+  }
+ ]
+}
+</script>
+<style>
+  :root{ --blue:#0d47c9; --cyan:#2bd2e4; --ink:#1c1c22; --muted:#6a6c75; --warn:#b4541a; --danger:#b42318; --ok:#1f7a4d; }
+  *{box-sizing:border-box}
+  body{font-family:-apple-system,'Helvetica Neue',Arial,"Hiragino Kaku Gothic ProN",Meiryo,sans-serif;
+       margin:0;color:var(--ink);line-height:1.8;background:#fff;}
+  .hero{background:linear-gradient(135deg,var(--blue),var(--cyan));color:#fff;padding:36px 20px 32px;}
+  .hero .in{max-width:760px;margin:0 auto;}
+  .hero .brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:.95em;margin-bottom:14px;}
+  .hero .brand img{width:32px;height:32px;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,.25);}
+  .hero .brand a{color:#fff;text-decoration:none;}
+  .hero h1{font-size:1.6em;margin:0 0 8px;line-height:1.4;letter-spacing:.01em;}
+  .hero p{margin:0;opacity:.95;}
+  main{max-width:760px;margin:0 auto;padding:28px 20px 60px;}
+  h2{font-size:1.2em;margin:2em 0 .6em;padding-left:12px;border-left:4px solid var(--cyan);}
+  h3{font-size:1.02em;margin:1.4em 0 .4em;}
+  p.nav{font-size:.92em;line-height:2.2;}
+  a{color:var(--blue);}
+  .muted{color:var(--muted);}
+  .warn{color:var(--warn);}
+  .card{background:#f6f8fb;border:1px solid #e7ebf1;border-radius:14px;padding:18px 20px;margin-top:14px;}
+  .card.note ul{margin:0;padding-left:1.3em;}
+  .card.note li{margin:4px 0;}
+  .card.calc{border-color:#cfe6ef;background:#f3fbfd;}
+  .calc label{display:block;font-size:.9em;color:var(--muted);margin-top:8px;}
+  .calc label small{display:block;font-size:.88em;color:var(--muted);line-height:1.5;margin-top:2px;}
+  .calc input{font:inherit;padding:8px 10px;border:1px solid #c9d2dd;border-radius:8px;background:#fff;width:100%;max-width:100%;}
+  .calc .row{display:flex;flex-wrap:wrap;gap:12px 18px;align-items:flex-start;}
+  .calc .row > div{flex:1 1 200px;}
+  .calc .unit{display:flex;align-items:center;gap:6px;}
+  .calc .unit span{white-space:nowrap;color:var(--muted);font-size:.95em;}
+  .calc .out{margin-top:14px;padding:12px 14px;background:#fff;border:1px solid #e7ebf1;border-radius:10px;font-size:.95em;line-height:1.9;}
+  .calc .out b{color:var(--blue);}
+  .out .sec{margin:10px 0 0;padding-top:10px;border-top:1px solid #eee;}
+  .out .sec:first-child{margin-top:0;padding-top:0;border-top:none;}
+  .out .ttl{font-weight:700;font-size:.9em;color:var(--muted);display:block;}
+  .badge{display:inline-block;font-size:.82em;font-weight:700;padding:1px 10px;border-radius:999px;color:#fff;vertical-align:1px;margin-right:6px;}
+  .badge.alert{background:var(--danger);}
+  .badge.notable{background:var(--warn);}
+  .badge.info{background:var(--ok);}
+  .figures{display:flex;flex-wrap:wrap;gap:8px 18px;margin:0;padding:0;list-style:none;}
+  .figures li{flex:1 1 160px;}
+  .figures .k{display:block;font-size:.82em;color:var(--muted);}
+  .figures .v{font-weight:700;color:var(--blue);}
+  .levels{list-style:none;padding:0;margin:0;}
+  .levels li{padding:8px 0;border-bottom:1px solid #eee;}
+  .levels li:last-child{border-bottom:none;}
+  .cta{background:linear-gradient(135deg,var(--blue),var(--cyan));color:#fff;border-radius:16px;padding:24px 22px;margin-top:40px;text-align:center;}
+  .cta h2{color:#fff;border:none;padding:0;margin:0 0 6px;font-size:1.15em;}
+  .cta p{margin:0 0 14px;opacity:.95;}
+  .cta .btn{display:inline-block;background:#fff;color:var(--blue);text-decoration:none;font-weight:700;padding:11px 24px;border-radius:999px;box-shadow:0 6px 18px rgba(0,0,0,.18);}
+  footer{color:var(--muted);font-size:.85em;text-align:center;padding:28px 20px 60px;}
+  footer a{margin:0 8px;}
+</style>
+</head>
+<body>
+  <div class="hero"><div class="in">
+    <div class="brand"><img src="./icon.png" alt=""><a href="./">Subscope</a></div>
+    <h1>サブスクの支出診断（Web 版）</h1>
+    <p>サブスクの月額合計・固定費・手取りの 3 つを入れるだけ。平均との比較、見直しの目安、年額換算をその場で出します。入力はブラウザの中だけで計算し、どこにも送りません。</p>
+  </div></div>
+
+  <main>
+    <p>「サブスクに月いくら使っていると多いのか」「固定費と合わせて手取りのどれくらいなら大丈夫か」は、合計の額だけでは判断しにくいものです。
+    ここでは、iPhone アプリ <a href="./">Subscope</a> の支出診断が使っているのと<strong>同じしきい値</strong>で、入力した 3 つの数字から
+    <strong>平均との比較・見直しの目安・年額換算</strong>を出します。サブスクの月額合計だけでも診断できます（固定費と手取りは任意）。</p>
+
+    <p class="nav"><a href="#calc">診断する</a> ／ <a href="#how">診断の読み方</a> ／ <a href="#avg">平均の出典</a> ／ <a href="#about">このページについて</a> ／ <a href="./prices.html">サブスク料金一覧</a> ／ <a href="./cancel.html">解約方法</a></p>
+
+    <h2 id="calc">診断する</h2>
+    <div class="card calc">
+      <div class="row">
+        <div>
+          <label for="d-sub">サブスクの月額合計<small>動画・音楽・AI・クラウドなど、月に払っているサブスクの合計。年払いの物は 12 で割った額で。金額が分からない物は <a href="./prices.html">料金一覧</a> から。</small></label>
+          <div class="unit"><input type="number" id="d-sub" inputmode="numeric" min="0" max="99999999" step="1" placeholder="例: 4500"><span>円／月</span></div>
+        </div>
+        <div>
+          <label for="d-fixed">固定費の月額（任意）<small>家賃・光熱費・通信費・保険など、毎月ほぼ決まって出ていく額。入れると「サブスクが支出全体に占める割合」で判定します。</small></label>
+          <div class="unit"><input type="number" id="d-fixed" inputmode="numeric" min="0" max="99999999" step="1" placeholder="例: 120000"><span>円／月</span></div>
+        </div>
+        <div>
+          <label for="d-income">手取りの月額（任意）<small>入れると、手取りに対するサブスクと固定費の割合を出します。</small></label>
+          <div class="unit"><input type="number" id="d-income" inputmode="numeric" min="0" max="99999999" step="1" placeholder="例: 250000"><span>円／月</span></div>
+        </div>
+      </div>
+      <div class="out" id="d-out">サブスクの月額合計を入れると、平均との比較・見直しの目安・年額換算を出します（この計算は端末内だけで行い、どこにも送らず、保存もしません）。</div>
+      <p class="muted" style="font-size:.85em;margin:10px 0 0;">※ しきい値は Subscope アプリの支出診断と同じです。アプリは登録したサービス 1 件ごとに判定し、値上げ・重複・更新日の直前も見ます。ここでは合計の額から「どのくらいの額のサブスク 1 件が目安に掛かるか」を逆算して示します。</p>
+    </div>
+
+    <h2 id="how">診断の読み方（アプリと同じ基準）</h2>
+    <div class="card">
+      <p style="margin-top:0;">Subscope の支出診断は、サブスク 1 件の年額が<strong>支出全体（サブスク＋固定費）の年額に占める割合</strong>と<strong>実額</strong>の両方で重要度を決めます。
+      絶対額だけで切ると、登録の多い人では小さな割合の物が目立ち、登録の少ない人では何も引っかからないためです。</p>
+      <ul class="levels">
+        <li><span class="badge alert">要注意</span>年額が全体の <strong>10% 以上</strong>、かつ <strong>12,000 円以上</strong>（月 1,000 円以上）。見直すと効果がいちばん大きい相手。</li>
+        <li><span class="badge notable">注目</span>年額が全体の <strong>4% 以上</strong>、かつ <strong>3,600 円以上</strong>（月 300 円以上）。使っていなければ止める候補。</li>
+        <li><span class="badge info">目安の範囲内</span>上のどちらにも掛からない物。</li>
+      </ul>
+      <p class="muted" style="font-size:.9em;margin:10px 0 0;">このほかアプリでは、登録時より <strong>3% 以上かつ月 10 円以上</strong>上がった物を「値上げ」、同じジャンルが 2 件以上ある物を「重複」、年額の更新が 60 日以内・月額の請求が 7 日以内（月 2,000 円以上）の物を「解約タイミング」として知らせます。</p>
+    </div>
+
+    <h2 id="avg">「平均との比較」の出典</h2>
+    <div class="card note">
+      <ul>
+        <li><strong>月額合計で最も多いのは「2,000 円以下」</strong>: ゼニエモン（株式会社バリューファースト）が 10 代以上の男女 400 名に行った調査（2025 年 7 月 24 日〜8 月 7 日）。サブスクを利用している人は 79.0%（20 代は 92.0%）で、毎月の合計は「2,000 円以下」が最多、1 年以上契約を見直していない人は約 3 割。
+          <a href="https://www.commercepick.com/archives/70690" rel="noopener" target="_blank">コマースピック（2025 年 8 月 1 日）</a>・2026 年 11 月 10 日確認。</li>
+        <li><strong>使っていないのに課金を放置した経験は 53.0%、放置額は月平均 約 3,600 円</strong>: NilCraft が 20〜59 歳の男女 300 名に行った調査（2026 年 4 月 27 日）。放置していたサブスクの月額合計は「500〜1,000 円未満」26.4%・「1,000〜2,000 円未満」23.3% が上位で、平均は月 約 3,600 円・年換算 約 43,000 円。気づいたきっかけの 1 位は「クレジットカード／銀行口座の明細を見返したとき」28.3%。
+          <a href="https://webtan.impress.co.jp/n/2026/05/27/52684" rel="noopener" target="_blank">Web担当者Forum（2026 年 5 月 27 日）</a>・2026 年 11 月 10 日確認。</li>
+        <li>どちらもインターネット調査で、回答者の年代や登録の仕方に偏りがあります。「平均より多い」は良し悪しではなく、<strong>見直す余地の大きさ</strong>の目安として読んでください。</li>
+      </ul>
+    </div>
+
+    <h2 id="about">このページについて</h2>
+    <div class="card note">
+      <ul>
+        <li>入力した金額は<strong>ブラウザの中だけで計算</strong>し、サーバーへ送らず、Cookie やブラウザへの保存もしません。ページを閉じると消えます。</li>
+        <li>しきい値は iPhone アプリ Subscope の支出診断（2.0）と同じ物を写しています。アプリ側を変えたときは、このページも同時に直します。</li>
+        <li>各サービスの料金は <a href="./prices.html">サブスク料金一覧（税込）</a>、無料体験の長さは <a href="./trials.html">無料体験の解約期限 早見表</a>、解約の窓口は <a href="./cancel.html">解約方法の早見表</a> をご覧ください。</li>
+        <li>誤りに気づかれた場合は <a href="mailto:subscope.app@proton.me">subscope.app@proton.me</a> までお知らせください。</li>
+      </ul>
+      <p class="muted" style="margin:6px 0 0;font-size:.85em;">最終更新: 2026-11-10</p>
+    </div>
+
+    <div class="cta">
+      <h2>登録しておけば、毎月自動でこの診断が出ます</h2>
+      <p>Subscope は、サブスクと固定費を登録するだけで月額・年額の合計と次の支払日を見通せる iPhone アプリです。支出診断はサービス 1 件ごとに、値上げ・重複・解約どきまで自動でチェックします（端末内で計算・通信なし）。</p>
+      <a class="btn" href="https://apps.apple.com/jp/app/id6785280296">App Store でダウンロード</a>
+    </div>
+  </main>
+
+  <footer>
+    <a href="./">Subscope トップ</a><a href="./prices.html">サブスク料金一覧</a><a href="./trials.html">無料体験の解約期限</a><a href="./cancel.html">解約方法</a><a href="./privacy.html">プライバシーポリシー</a><br>© 2026 Subscope
+  </footer>
+
+  <script>
+  /* ===== しきい値（1 か所にまとめる）=====
+   * 正は Subscope アプリの DiagnosisEngine.swift（contextualSeverity・priceIncrease・renewalWindow・shortCycleFloorJPY）。
+   * ここを変えるときはアプリ側と同時に。年額換算はアプリと同じく 月額 × 12。
+   */
+  var THRESHOLDS = {
+    alertShare: 0.10,  alertImpactJPY: 12000,   // 全体の 10% 以上かつ年 12,000 円以上 → 要注意
+    notableShare: 0.04, notableImpactJPY: 3600, // 全体の 4% 以上かつ年 3,600 円以上 → 注目
+    priceUpRatio: 0.03, priceUpMinMonthlyJPY: 10, // 値上げ: 3% 以上かつ月 10 円以上
+    renewalWindowDays: { yearly: 60, monthly: 7, weekly: 3 },
+    shortCycleFloorJPY: 2000
+  };
+  /* 「平均との比較」に使う調査の数字（出典は #avg） */
+  var SURVEY = {
+    typicalMonthlyMaxJPY: 2000,   // ゼニエモン 2025-08: 月額合計で最多の回答「2,000 円以下」
+    idleMonthlyAvgJPY: 3600,      // NilCraft 2026-05: 放置サブスクの月額合計の平均
+    idleYearlyAvgJPY: 43000,
+    idleExperienceRate: 0.53
+  };
+  /* 手取りに対する「生活に必要な支出」の目安（家計の 50/30/20 の考え方・一般的な目安） */
+  var INCOME_GUIDE_SHARE = 0.50;
+
+  /** アプリの contextualSeverity と同じ判定。返り値: 'alert' | 'notable' | 'info' */
+  function severity(impactYearlyJPY, totalYearlyJPY) {
+    if (!(totalYearlyJPY > 0) || !(impactYearlyJPY > 0)) return 'info';
+    var share = impactYearlyJPY / totalYearlyJPY;
+    if (share >= THRESHOLDS.alertShare && impactYearlyJPY >= THRESHOLDS.alertImpactJPY) return 'alert';
+    if (share >= THRESHOLDS.notableShare && impactYearlyJPY >= THRESHOLDS.notableImpactJPY) return 'notable';
+    return 'info';
+  }
+
+  /** 診断の本体（純粋関数・DOM に触らない）。月額 3 つ（円）を受けて結果の数字を返す。 */
+  function diagnose(subMonthly, fixedMonthly, incomeMonthly) {
+    var sub = Math.max(0, +subMonthly || 0);
+    var fixed = Math.max(0, +fixedMonthly || 0);
+    var income = Math.max(0, +incomeMonthly || 0);
+    var subYear = sub * 12, fixedYear = fixed * 12;
+    var totalMonthly = sub + fixed, totalYear = subYear + fixedYear;
+    // アプリは「1 件の年額」を全体に対して判定する。合計しか無いここでは、
+    // 全体に対して各段階に掛かる「1 件の年額のライン」を逆算して示す。
+    var alertLineYear = Math.max(THRESHOLDS.alertImpactJPY, totalYear * THRESHOLDS.alertShare);
+    var notableLineYear = Math.max(THRESHOLDS.notableImpactJPY, totalYear * THRESHOLDS.notableShare);
+    var avgBand = sub <= 0 ? 'none'
+      : sub <= SURVEY.typicalMonthlyMaxJPY ? 'typical'
+      : sub <= SURVEY.typicalMonthlyMaxJPY * 2.5 ? 'above'
+      : 'high';
+    return {
+      subMonthly: sub, fixedMonthly: fixed, incomeMonthly: income,
+      subYear: subYear, fixedYear: fixedYear, totalMonthly: totalMonthly, totalYear: totalYear,
+      subShareOfTotal: fixed > 0 && totalYear > 0 ? subYear / totalYear : null,
+      subSeverityInTotal: fixed > 0 ? severity(subYear, totalYear) : null,
+      alertLineYear: alertLineYear, notableLineYear: notableLineYear,
+      avgBand: avgBand,
+      subShareOfIncome: income > 0 ? sub / income : null,
+      fixedShareOfIncome: income > 0 ? fixed / income : null,
+      totalShareOfIncome: income > 0 ? totalMonthly / income : null,
+      overIncomeGuide: income > 0 ? totalMonthly / income > INCOME_GUIDE_SHARE : null
+    };
+  }
+  if (typeof window !== 'undefined') window.SubscopeDiagnosis = { thresholds: THRESHOLDS, survey: SURVEY, severity: severity, diagnose: diagnose };
+  if (typeof module !== 'undefined' && module.exports) module.exports = { thresholds: THRESHOLDS, survey: SURVEY, severity: severity, diagnose: diagnose };
+
+  (function () {
+    if (typeof document === 'undefined') return;
+    var $ = function (id) { return document.getElementById(id); };
+    var subEl = $('d-sub'), fixedEl = $('d-fixed'), incomeEl = $('d-income'), out = $('d-out');
+    if (!subEl || !out) return;
+    var IDLE = 'サブスクの月額合計を入れると、平均との比較・見直しの目安・年額換算を出します（この計算は端末内だけで行い、どこにも送らず、保存もしません）。';
+    function yen(n) { return Math.round(n).toLocaleString('ja-JP') + '円'; }
+    function pct(x) { return Math.round(x * 100) + '%'; }
+    function badge(level) {
+      return level === 'alert' ? '<span class="badge alert">要注意</span>'
+        : level === 'notable' ? '<span class="badge notable">注目</span>'
+        : '<span class="badge info">目安の範囲内</span>';
+    }
+    function num(el) { var v = parseFloat(el.value); return isNaN(v) ? 0 : Math.min(99999999, Math.max(0, v)); }
+
+    function update() {
+      var r = diagnose(num(subEl), num(fixedEl), num(incomeEl));
+      if (r.subMonthly <= 0) { out.textContent = IDLE; return; }
+      var h = '';
+
+      // 年額換算
+      h += '<div class="sec"><span class="ttl">年額換算（月額 × 12）</span><ul class="figures">';
+      h += '<li><span class="k">サブスク</span><span class="v">年 ' + yen(r.subYear) + '</span>（月 ' + yen(r.subMonthly) + '）</li>';
+      if (r.fixedMonthly > 0) {
+        h += '<li><span class="k">固定費</span><span class="v">年 ' + yen(r.fixedYear) + '</span>（月 ' + yen(r.fixedMonthly) + '）</li>';
+        h += '<li><span class="k">合計</span><span class="v">年 ' + yen(r.totalYear) + '</span>（月 ' + yen(r.totalMonthly) + '）</li>';
+      }
+      h += '</ul></div>';
+
+      // 平均との比較
+      h += '<div class="sec"><span class="ttl">平均との比較</span>';
+      if (r.avgBand === 'typical') {
+        h += '<span class="badge info">いちばん多い層</span>月 ' + yen(r.subMonthly) + ' は、調査で最も多い「月 ' + yen(SURVEY.typicalMonthlyMaxJPY) + ' 以下」の層に入ります。';
+      } else if (r.avgBand === 'above') {
+        h += '<span class="badge notable">多い側</span>月 ' + yen(r.subMonthly) + ' は、調査で最も多い「月 ' + yen(SURVEY.typicalMonthlyMaxJPY) + ' 以下」の層を超えています。使っていない物が混ざっていないか、1 件ずつ確かめる余地があります。';
+      } else {
+        h += '<span class="badge alert">かなり多い側</span>月 ' + yen(r.subMonthly) + ' は、調査で最も多い「月 ' + yen(SURVEY.typicalMonthlyMaxJPY) + ' 以下」の層の ' + (Math.round(r.subMonthly / SURVEY.typicalMonthlyMaxJPY * 10) / 10) + ' 倍以上です。1 件ずつ「続ける理由を言えるか」で見直すと効果が出やすい額です。';
+      }
+      h += '<br><small class="muted">使っていないのに課金を放置した経験のある人は 53.0%、放置額の平均は月 ' + yen(SURVEY.idleMonthlyAvgJPY) + '（年 ' + yen(SURVEY.idleYearlyAvgJPY) + '）。使っていない物が 1 つ混ざっているだけで、それくらいの額になります（出典は下の「平均の出典」）。</small></div>';
+
+      // 見直しの目安
+      h += '<div class="sec"><span class="ttl">見直しの目安（Subscope アプリと同じしきい値）</span>';
+      if (r.fixedMonthly > 0) {
+        h += badge(r.subSeverityInTotal) + 'サブスクは固定費を含めた支出全体の <b>' + pct(r.subShareOfTotal) + '</b>（年 ' + yen(r.subYear) + '）です。';
+        h += r.subSeverityInTotal === 'alert' ? '全体の 10% 以上かつ年 12,000 円以上なので、まとめて見直すと効果が大きい所です。'
+          : r.subSeverityInTotal === 'notable' ? '全体の 4% 以上かつ年 3,600 円以上なので、使っていない物があれば止める候補です。'
+          : '全体に占める割合は小さく、サブスクより固定費の方が見直しの効き目は大きい状態です。';
+        h += '<br>';
+      }
+      h += 'この支出全体では、<b>年 ' + yen(r.alertLineYear) + '（月 ' + yen(r.alertLineYear / 12) + '）以上</b>のサブスク 1 件が <span class="badge alert">要注意</span>、<b>年 ' + yen(r.notableLineYear) + '（月 ' + yen(r.notableLineYear / 12) + '）以上</b>が <span class="badge notable">注目</span> になります。';
+      h += '<br><small class="muted">月 ' + yen(r.alertLineYear / 12) + ' 以上の物はまず「続ける理由」をひとつ挙げられるか、月 ' + yen(r.notableLineYear / 12) + ' 以上の物は「この 1 か月で使ったか」で判断すると迷いにくくなります。</small></div>';
+
+      // 手取りとの比較
+      if (r.incomeMonthly > 0) {
+        h += '<div class="sec"><span class="ttl">手取りとの比較</span>';
+        h += 'サブスクは手取りの <b>' + pct(r.subShareOfIncome) + '</b>';
+        if (r.fixedMonthly > 0) h += '、固定費は <b>' + pct(r.fixedShareOfIncome) + '</b>、合わせて <b>' + pct(r.totalShareOfIncome) + '</b>';
+        h += ' です。';
+        if (r.fixedMonthly > 0) {
+          h += r.overIncomeGuide
+            ? '<span class="badge notable">半分超</span>固定費とサブスクで手取りの半分を超えています。家計の一般的な目安（50/30/20）では生活に必要な支出を手取りの 50% 以内に収めるのが基本なので、額の大きい固定費から順に見直す余地があります。'
+            : '<span class="badge info">半分以内</span>固定費とサブスクの合計は手取りの半分以内です。';
+        } else {
+          h += '<small class="muted">固定費も入れると、生活に必要な支出が手取りの半分以内かも判定します。</small>';
+        }
+        h += '</div>';
+      }
+      out.innerHTML = h;
+    }
+    [subEl, fixedEl, incomeEl].forEach(function (el) { if (el) { el.addEventListener('change', update); el.addEventListener('input', update); } });
+    update();
+  })();
+  </script>
+</body>
+</html>
