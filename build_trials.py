@@ -31,7 +31,7 @@ APP_STORE_URL = "https://apps.apple.com/jp/app/id6785280296"
 SUPPORT_MAIL = "subscope.app@proton.me"
 # App Store のキャンペーンリンク（ASC のアナリティクスで入口を見分ける）。
 # pt（プロバイダ ID・ASC の「キャンペーンリンクを生成」で出る数字）が空の間は ct だけを付ける。
-CAMPAIGN_PT = ""
+CAMPAIGN_PT = "129017883"
 CAMPAIGN_CT_ICS = "web-trials-ics"
 
 
