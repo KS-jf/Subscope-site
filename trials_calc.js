@@ -119,24 +119,25 @@ if (typeof document !== 'undefined') (function () {
     if (icsWrap) icsWrap.style.display = '';
     if (icsMsg) icsMsg.textContent = '';
   }
+  var lastUrl = null;
   function saveIcs() {
     if (!cur) return;
     var text = TrialCalc.buildIcs(cur, nameEl ? nameEl.value : '', { url: (icsBtn && icsBtn.getAttribute('data-app-url')) || '' });
     var file = TrialCalc.icsFileName(cur);
     try {
-      var ua = navigator.userAgent || '';
-      var ios = /iPad|iPhone|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
-      if (ios) {
-        // iOS の Safari は text/calendar をそのまま開くと「カレンダーに追加」の画面を出す
-        window.location.href = 'data:text/calendar;charset=utf-8,' + encodeURIComponent(text);
-      } else {
-        var url = URL.createObjectURL(new Blob([text], { type: 'text/calendar;charset=utf-8' }));
-        var a = document.createElement('a');
-        a.href = url; a.download = file; a.style.display = 'none';
-        document.body.appendChild(a); a.click(); document.body.removeChild(a);
-        setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+      // 🚨 iOS でも data: の URL へ移動しない（Safari は一番上の画面の data: への移動を黙って止める＝押しても何も起きない。2026-11-14）。
+      //    どの端末も Blob のリンクを押す形にし、動かなかった時のために同じリンクを画面にも残す（人が直接押すリンクは止められにくい）
+      if (lastUrl) { try { URL.revokeObjectURL(lastUrl); } catch (e2) {} }
+      var url = lastUrl = URL.createObjectURL(new Blob([text], { type: 'text/calendar;charset=utf-8' }));
+      var a = document.createElement('a');
+      a.href = url; a.download = file; a.style.display = 'none';
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      if (icsMsg) {
+        icsMsg.textContent = '予定のファイルを作りました。開くとカレンダーに追加できます（2 日前と前日の朝 9 時に通知）。何も起きない時は → ';
+        var link = document.createElement('a');
+        link.href = url; link.download = file; link.textContent = file + ' を開く';
+        icsMsg.appendChild(link);
       }
-      if (icsMsg) icsMsg.textContent = '予定のファイル（' + file + '）を作りました。開くとカレンダーに追加できます。2 日前と前日の朝 9 時に通知が出ます。';
     } catch (e) {
       if (icsMsg) icsMsg.textContent = 'このブラウザでは予定のファイルを作れませんでした。上の日付をカレンダーに手で入れてください。';
     }
