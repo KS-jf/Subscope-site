@@ -10,6 +10,9 @@ trials.json の確認日を読んで書く（このスクリプトは sitemap �
 - 表に載せるのは「有料プランに無料体験（お試し期間）があるか・何日か」。価格は prices.html に任せる。
 - 「いつまでに解約すれば課金されないか」の数え方は、サービスごとに違うので型（◯日間／◯か月）で説明し、
   ページ内の計算機（JS・通信なし）で登録日から逆算できるようにする。JS が無くても表と説明は読める。
+- 計算機の JS は trials_calc.js が正（ここへそのまま埋め込む）。計算と .ics の組み立ては
+  `node tests/trials_calc_test.js` で確かめる。下の年末年始の例の表は、同じ数え方を Python で写した物。
+- 「年末年始に始めた無料体験」の節は、生成した日が 11/1〜2/15 の間だけ出す（季節が終われば次の生成で消える）。
 """
 from __future__ import annotations
 
@@ -21,10 +24,20 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 SRC = ROOT / "trials.json"
 OUT = ROOT / "trials.html"
+CALC_JS = ROOT / "trials_calc.js"
 
 SITE_URL = "https://ks-jf.github.io/Subscope-site/"
 APP_STORE_URL = "https://apps.apple.com/jp/app/id6785280296"
 SUPPORT_MAIL = "subscope.app@proton.me"
+# App Store のキャンペーンリンク（ASC のアナリティクスで入口を見分ける）。
+# pt（プロバイダ ID・ASC の「キャンペーンリンクを生成」で出る数字）が空の間は ct だけを付ける。
+CAMPAIGN_PT = ""
+CAMPAIGN_CT_ICS = "web-trials-ics"
+
+
+def campaign_url(ct: str) -> str:
+    q = (f"pt={CAMPAIGN_PT}&" if CAMPAIGN_PT else "") + f"ct={ct}&mt=8"
+    return f"{APP_STORE_URL}?{q}"
 
 
 def esc(s: str) -> str:
@@ -43,6 +56,61 @@ def jp_date(iso: str) -> str:
     if len(parts) == 2:
         return f"{int(parts[0])}年{int(parts[1])}月"
     return iso
+
+
+def add_months(d: dt.date, n: int) -> dt.date:
+    """trials_calc.js の addMonths と同じ（翌月に同じ日付が無ければ末日に寄せる）。"""
+    m = d.month - 1 + n
+    y, m = d.year + m // 12, m % 12 + 1
+    last = (dt.date(y + (m == 12), m % 12 + 1, 1) - dt.timedelta(days=1)).day
+    return dt.date(y, m, min(d.day, last))
+
+
+def trial_dates(start: dt.date, kind: str, store: bool = False) -> tuple[dt.date, dt.date, dt.date]:
+    """trials_calc.js の compute と同じ数え方。(無料の最終日, 課金が始まる日, 解約の目安)。"""
+    n = int(kind[1:])
+    bill = start + dt.timedelta(days=n) if kind[0] == "d" else add_months(start, n)
+    last = bill - dt.timedelta(days=1)
+    deadline = last - dt.timedelta(days=2 if store else 1)
+    return last, bill, deadline
+
+
+def md_w(d: dt.date) -> str:
+    return f"{d.month}月{d.day}日（{'月火水木金土日'[d.weekday()]}）"
+
+
+def render_newyear(today: dt.date) -> tuple[str, str]:
+    """年末年始に始めた無料体験の例の節と、目次の 1 項目。季節の外では ("", "")。"""
+    in_season = (today.month, today.day) >= (11, 1) or (today.month, today.day) <= (2, 15)
+    if not in_season:
+        return "", ""
+    y = today.year if today.month >= 11 else today.year - 1   # 12 月の側の年
+    cases = [
+        (dt.date(y, 12, 24), "d30", "30日間"),
+        (dt.date(y, 12, 28), "m3", "3か月"),
+        (dt.date(y, 12, 31), "m1", "1か月"),
+        (dt.date(y + 1, 1, 1), "d31", "31日間"),
+        (dt.date(y + 1, 1, 3), "d14", "14日間"),
+    ]
+    rows = ""
+    for start, kind, how in cases:
+        last, bill, deadline = trial_dates(start, kind)
+        rows += ("<tr>"
+                 f"<th scope=\"row\">{md_w(start)}</th>"
+                 f"<td data-label=\"長さ\">{how}</td>"
+                 f"<td data-label=\"無料の最終日\">{md_w(last)}</td>"
+                 f"<td data-label=\"課金が始まる日\">{md_w(bill)}</td>"
+                 f"<td data-label=\"解約の目安\"><strong>{md_w(deadline)}</strong></td>"
+                 "</tr>")
+    section = f"""<h2 id="newyear">年末年始に始めた無料体験の解約期限（{y}年12月〜{y + 1}年1月）</h2>
+    <p>年末年始は、休みに合わせて動画や音楽の無料体験を始める人が増える時期です。解約の期限は<strong>休みが明けて忙しくなった1〜2月</strong>に来るので、始めた日にカレンダーへ入れておくと忘れません。
+    下は登録した日ごとの例です（アプリストア経由でない場合。経由なら解約の目安がもう1日早くなります）。自分の日付は下の<a href="#calc">計算機</a>で出して、そのままカレンダーに入れられます。</p>
+    <div class="tablewrap"><table>
+      <thead><tr><th scope="col">登録した日</th><th scope="col">長さ</th><th scope="col">無料の最終日</th><th scope="col">課金が始まる日</th><th scope="col">解約の目安</th></tr></thead>
+      <tbody>{rows}</tbody></table></div>
+    <p class="muted" style="font-size:.9em;">1月31日に「1か月」で登録すると、2月に31日が無いため2月の末日に課金されます。一般的な数え方による目安です。</p>
+"""
+    return section, "<a href=\"#newyear\">年末年始に始めた体験</a> ／ "
 
 
 def render_row(s: dict) -> str:
@@ -97,11 +165,16 @@ def render_page(data: dict, today: dt.date) -> str:
     nav = " ／ ".join(f"<a href=\"#g{i}\">{esc(g)}</a>" for i, (g, _) in enumerate(groups))
     sections = "".join(render_group(g, items, i) for i, (g, items) in enumerate(groups))
 
+    newyear, newyear_nav = render_newyear(today)
+    calc_js = CALC_JS.read_text(encoding="utf-8")
+    assert "</script" not in calc_js.lower()
+    ics_url = campaign_url(CAMPAIGN_CT_ICS)
+
     label = jp_date(checked)
     title = f"サブスクの無料体験はいつまでに解約すればいい？ 主要{n}サービスの無料期間と解約期限の数え方（{label[:label.index('月')+1]}確認）"
     description = (
         f"Spotify・Apple Music・U-NEXT・Amazon プライム・Kindle Unlimited など主要{n}サービスの無料体験の長さを一覧化。"
-        "「30日間」「1か月」の数え方と、課金されない解約期限を登録日から逆算する計算機つき。"
+        "「30日間」「1か月」の数え方と、課金されない解約期限を登録日から逆算してカレンダーに入れられる計算機つき。"
         f"無料体験が無いサービス（Netflix・Hulu・Disney+ など）も明記。{label}確認。"
     )
 
@@ -192,6 +265,12 @@ def render_page(data: dict, today: dt.date) -> str:
   .calc .out{{margin-top:14px;padding:12px 14px;background:#fff;border:1px solid #e7ebf1;border-radius:10px;font-size:.95em;line-height:1.9;}}
   .calc .out b{{color:var(--blue);}}
   .calc .chk{{display:flex;align-items:center;gap:8px;font-size:.92em;margin-top:10px;}}
+  .calc .ics{{margin-top:14px;padding-top:12px;border-top:1px dashed #cfe6ef;}}
+  .calc .ics .row{{align-items:flex-end;}}
+  .calc button.icsbtn{{font:inherit;font-weight:700;color:#fff;background:var(--blue);border:none;border-radius:999px;
+       padding:10px 20px;cursor:pointer;box-shadow:0 4px 12px rgba(13,71,201,.25);}}
+  .calc button.icsbtn:active{{transform:translateY(1px);}}
+  .calc .icsmsg{{font-size:.88em;color:var(--muted);margin:8px 0 0;min-height:1.2em;}}
   .steps{{counter-reset:s;list-style:none;padding:0;margin:0;}}
   .steps li{{counter-increment:s;position:relative;padding:8px 0 8px 2.2em;border-bottom:1px solid #eee;}}
   .steps li:last-child{{border-bottom:none;}}
@@ -241,7 +320,7 @@ def render_page(data: dict, today: dt.date) -> str:
     このページでは、日本で利用者の多い{n}サービスの無料体験の有無と長さを<strong>出典つき</strong>でまとめ、登録日から解約期限を逆算できるようにしました。
     無料体験があるのは {n_yes} サービス、無いのは {n_no} サービスです（{esc('・'.join(no_names))}）。</p>
 
-    <p class="nav"><a href="#howto">解約期限の数え方</a> ／ <a href="#calc">計算機</a> ／ {nav} ／ <a href="#about">このデータについて</a></p>
+    <p class="nav"><a href="#howto">解約期限の数え方</a> ／ {newyear_nav}<a href="#calc">計算機</a> ／ {nav} ／ <a href="#about">このデータについて</a></p>
 
     <h2 id="howto">解約期限の数え方（3つの型）</h2>
     <ol class="steps">
@@ -261,6 +340,7 @@ def render_page(data: dict, today: dt.date) -> str:
     </ol>
     <p class="muted" style="font-size:.9em;">どの型でも「無料期間の最終日」ではなく<strong>その前日</strong>を自分の締め切りにしておくと、時刻やタイムゾーンの差で課金されることがありません。</p>
 
+    {newyear}
     <h2 id="calc">解約期限の計算機</h2>
     <div class="card calc">
       <div class="row">
@@ -280,6 +360,15 @@ def render_page(data: dict, today: dt.date) -> str:
       </div>
       <label class="chk"><input type="checkbox" id="c-store"> App Store / Google Play 経由で登録した（終了の24時間以上前に解約が要る）</label>
       <div class="out" id="c-out">登録した日を選ぶと、無料の最終日・課金が始まる日・解約の目安を出します（この計算は端末内だけで行い、どこにも送りません）。</div>
+      <div class="ics" id="c-ics-wrap" style="display:none">
+        <div class="row">
+          <div><label for="c-name">サービス名（任意・予定の題名に入ります）</label><input type="text" id="c-name" maxlength="40" placeholder="例: U-NEXT" autocomplete="off"></div>
+          <div><button type="button" class="icsbtn" id="c-ics" data-app-url="{ics_url}">カレンダーに入れる（.ics）</button></div>
+        </div>
+        <p class="icsmsg" id="c-ics-msg" role="status"></p>
+        <p class="muted" style="font-size:.85em;margin:6px 0 0;">「解約の目安」の日を終日の予定にし、<strong>2日前と前日の朝9時</strong>に通知が出るファイルを作ります。iPhone のカレンダー・Google カレンダー・Outlook で開けます。ファイルはこの端末の中で作り、どこにも送りません・保存しません。
+        解約したあとも続けるサブスクは、<a href="{ics_url}">Subscope</a> に登録しておくと次の支払日の前にお知らせします。</p>
+      </div>
       <p class="muted" style="font-size:.85em;margin:10px 0 0;">※ 一般的な数え方にもとづく目安です。実際の請求日は各サービスの登録画面・確認メールに表示される日付を優先してください。</p>
     </div>
 
@@ -311,46 +400,7 @@ def render_page(data: dict, today: dt.date) -> str:
   </footer>
 
   <script>
-  // 解約期限の計算機。入力はこの端末の中だけで使い、どこにも送らない。
-  (function () {{
-    var $ = function (id) {{ return document.getElementById(id); }};
-    var dateEl = $('c-date'), kindEl = $('c-kind'), customWrap = $('c-custom-wrap'), customEl = $('c-custom'), storeEl = $('c-store'), out = $('c-out');
-    if (!dateEl || !kindEl || !out) return;
-    var W = ['日', '月', '火', '水', '木', '金', '土'];
-    function fmt(d) {{ return d.getFullYear() + '年' + (d.getMonth() + 1) + '月' + d.getDate() + '日（' + W[d.getDay()] + '）'; }}
-    function addDays(d, n) {{ var r = new Date(d.getTime()); r.setDate(r.getDate() + n); return r; }}
-    function addMonths(d, n) {{
-      // 翌月に同じ日付が無いときは、その月の末日に寄せる（1/31 + 1か月 → 2/28 か 2/29）
-      var y = d.getFullYear(), m = d.getMonth() + n, day = d.getDate();
-      var last = new Date(y, m + 1, 0).getDate();
-      return new Date(y, m, Math.min(day, last));
-    }}
-    function parse(v) {{ var p = (v || '').split('-'); if (p.length !== 3) return null; var d = new Date(+p[0], +p[1] - 1, +p[2]); return isNaN(d.getTime()) ? null : d; }}
-    function update() {{
-      customWrap.style.display = kindEl.value === 'custom' ? '' : 'none';
-      var d0 = parse(dateEl.value);
-      if (!d0) {{ out.textContent = '登録した日を選ぶと、無料の最終日・課金が始まる日・解約の目安を出します（この計算は端末内だけで行い、どこにも送りません）。'; return; }}
-      var k = kindEl.value, bill, how;
-      if (k === 'custom') {{ var n = Math.max(1, Math.min(400, parseInt(customEl.value, 10) || 1)); bill = addDays(d0, n); how = n + '日間'; }}
-      else if (k.charAt(0) === 'd') {{ var nd = parseInt(k.slice(1), 10); bill = addDays(d0, nd); how = nd + '日間'; }}
-      else {{ var nm = parseInt(k.slice(1), 10); bill = addMonths(d0, nm); how = nm + 'か月'; }}
-      var last = addDays(bill, -1);
-      var safe = addDays(last, storeEl.checked ? -1 : 0);   // ストア経由は「終了の24時間以上前」= 最終日の前日より前に
-      var deadline = addDays(safe, -1);                      // 時刻の差で課金されないよう、さらに前日を目安に
-      out.innerHTML =
-        '登録日 <b>' + fmt(d0) + '</b>・' + how + 'の場合<br>' +
-        '無料で使える最終日: <b>' + fmt(last) + '</b><br>' +
-        '課金が始まる日: <b>' + fmt(bill) + '</b><br>' +
-        '解約の目安（この日までに）: <b>' + fmt(deadline) + '</b>' +
-        (storeEl.checked ? '<br><small>App Store / Google Play 経由は終了の24時間以上前に解約が要るため、1日早めています。</small>' : '') +
-        '<br><small>月末に登録した場合や、登録時刻から数えるサービスでは前後することがあります。登録画面の日付を優先してください。</small>';
-    }}
-    [dateEl, kindEl, customEl, storeEl].forEach(function (el) {{ if (el) {{ el.addEventListener('change', update); el.addEventListener('input', update); }} }});
-    // 既定値: 今日
-    try {{ var t = new Date(); dateEl.value = t.getFullYear() + '-' + String(t.getMonth() + 1).padStart(2, '0') + '-' + String(t.getDate()).padStart(2, '0'); }} catch (e) {{}}
-    update();
-  }})();
-  </script>
+{calc_js}  </script>
 </body>
 </html>
 """
