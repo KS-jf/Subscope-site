@@ -19,6 +19,8 @@ import json
 import urllib.request
 from pathlib import Path
 
+import site_parts  # 全ページ共通の部品（同じ作者のほかの作品のカード）
+
 ROOT = Path(__file__).resolve().parent
 SRC = ROOT / "presets.json"
 OUT = ROOT / "prices.html"
@@ -433,6 +435,7 @@ def render_page(version: str, presets: list[dict], today: dt.date,
   .note ul{{padding-left:1.3em;margin:.4em 0;}}
   footer{{color:var(--muted);font-size:.85em;text-align:center;padding:28px 20px 60px;}}
   footer a{{margin:0 8px;}}
+{site_parts.OTHER_APPS_CSS}
   code{{background:#eef1f5;padding:2px 6px;border-radius:4px;}}
 
   /* 狭い画面では横スクロールさせず、1サービス=1カードに積み替える。
@@ -472,7 +475,7 @@ def render_page(version: str, presets: list[dict], today: dt.date,
     金額はすべて<strong>税込</strong>で、個人向けの標準プランを掲載しています。
     このデータは、サブスク管理アプリ <a href="./">Subscope</a> がサービス登録時に自動入力する料金プリセットと同じものです。</p>
 
-    <p class="nav">{nav} ／ <a href="#yearly">年払いの割引ランキング</a>{' ／ <a href="#hikes">値上げ一覧</a>' if hikes else ''} ／ <a href="./trials.html">無料体験の解約期限</a> ／ <a href="./cancel.html">解約方法</a></p>
+    <p class="nav">{nav} ／ <a href="#yearly">年払いの割引ランキング</a>{' ／ <a href="#hikes">値上げ一覧</a>' if hikes else ''} ／ <a href="./trials.html">無料体験の解約期限</a> ／ <a href="./cancel.html">解約方法</a> ／ <a href="./diagnosis.html">支出診断</a></p>
 
     {''.join(sections)}
 
@@ -490,6 +493,12 @@ def render_page(version: str, presets: list[dict], today: dt.date,
     <div class="card">
       <p>サービスのサイトで解約するのか、App Store / Google Play の定期購入から解約するのかはサービスと登録した経路で変わります。主要サービスの解約の窓口と、公式の解約ページへのリンク（確認日つき）、解約後いつまで使えるか・年払いの注意をまとめました。</p>
       <p><a href="./cancel.html"><strong>解約方法の早見表を見る →</strong></a></p>
+    </div>
+
+    <h2 id="diagnosis">合計すると、多い方？</h2>
+    <div class="card">
+      <p>上の料金を足した月額合計と、固定費・手取りを入れるだけで、調査の平均との比較、見直しの目安（Subscope の支出診断と同じしきい値）、年額換算をその場で出します。入力はブラウザの中だけで計算し、どこにも送りません。</p>
+      <p><a href="./diagnosis.html"><strong>サブスクの支出診断（Web 版）を試す →</strong></a></p>
     </div>
 
     <h2 id="about">このデータについて</h2>
@@ -511,8 +520,10 @@ def render_page(version: str, presets: list[dict], today: dt.date,
     </div>
   </main>
 
+{site_parts.other_apps_html()}
+
   <footer>
-    <a href="./">Subscope トップ</a><a href="./trials.html">無料体験の解約期限</a><a href="./cancel.html">解約方法</a><a href="./privacy.html">プライバシーポリシー</a><br>© 2026 Subscope
+    <a href="./">Subscope トップ</a><a href="./trials.html">無料体験の解約期限</a><a href="./cancel.html">解約方法</a><a href="./diagnosis.html">支出診断</a><a href="./privacy.html">プライバシーポリシー</a><br>© 2026 Subscope
   </footer>
 </body>
 </html>
@@ -530,12 +541,17 @@ def checked_of(name: str) -> str | None:
         return None
 
 
+# diagnosis.html は手書きのページ。中身（計算・文）を直した日に、ここも手で直す。
+DIAGNOSIS_LASTMOD = "2026-11-10"
+
+
 def render_sitemap(today: dt.date) -> str:
     urls = [
         ("", None),
         ("prices.html", today.isoformat()),
         ("trials.html", checked_of("trials.json")),
         ("cancel.html", checked_of("cancel.json")),
+        ("diagnosis.html", DIAGNOSIS_LASTMOD),
         ("privacy.html", None),
     ]
     body = ""

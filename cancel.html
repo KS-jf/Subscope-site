@@ -19,7 +19,7 @@
  "@type": "Article",
  "headline": "サブスクの解約方法 早見表｜主要25サービスの「どこで解約するか」と公式の解約ページ（2026年11月確認）",
  "description": "Netflix・Spotify・Amazon プライム・YouTube Premium・ChatGPT Plus・iCloud+ など主要25サービスの解約方法を一覧化。サービスのサイトで解約するのか、App Store / Google Play の定期購入から解約するのかの見分け方と、各サービスの公式の解約ページへのリンク（2026年11月7日確認）、解約後いつまで使えるか・年払いの注意をまとめました。",
- "dateModified": "2026-11-07",
+ "dateModified": "2026-11-15",
  "inLanguage": "ja",
  "mainEntityOfPage": "https://ks-jf.github.io/Subscope-site/cancel.html",
  "author": {
@@ -122,6 +122,17 @@
   .note ul{padding-left:1.3em;margin:.4em 0;}
   footer{color:var(--muted);font-size:.85em;text-align:center;padding:28px 20px 60px;}
   footer a{margin:0 8px;}
+  .oapps{max-width:760px;margin:0 auto;padding:8px 20px 12px;}
+  .oapps h2{font-size:1em;margin:0 0 10px;color:#6a6c75;font-weight:700;border:0;padding:0;}
+  .oapps ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .oapps a{display:flex;gap:12px;align-items:center;padding:12px 14px;border:1px solid #e3e8ef;border-radius:14px;
+    background:#fff;color:#1c1c22;text-decoration:none;height:100%;box-sizing:border-box;margin:0;}
+  .oapps a:hover{border-color:#0d47c9;}
+  .oapps img{width:56px;height:56px;border-radius:13px;flex:none;}
+  .oapps b{display:block;font-size:.98em;line-height:1.4;}
+  .oapps span{display:block;font-size:.84em;line-height:1.5;color:#6a6c75;}
+  .oapps span.en{font-size:.78em;}
+  @media (max-width:600px){ .oapps ul{grid-template-columns:1fr;} }
 
   /* 狭い画面では 1サービス=1カードに積み替える（prices.html・trials.html と同じ作り）。 */
   @media (max-width:640px){
@@ -198,7 +209,7 @@
         <li>載せているサービスは、サブスク管理アプリ <a href="./">Subscope</a> の料金プリセットと同じ25サービスです。料金は <a href="./prices.html">サブスク料金一覧（税込）</a>、無料体験の長さは <a href="./trials.html">無料体験の解約期限 早見表</a>、解約する前に合計が多いかを知りたいときは <a href="./diagnosis.html">サブスクの支出診断（Web 版）</a> をご覧ください。毎月1日に価格を確認するときに、このページのリンク切れと確認日も見直します。</li>
         <li>リンク切れや誤りに気づかれた場合は <a href="mailto:subscope.app@proton.me">subscope.app@proton.me</a> までお知らせください。</li>
       </ul>
-      <p class="muted" style="margin:6px 0 0;font-size:.85em;">最終更新: 2026-11-07</p>
+      <p class="muted" style="margin:6px 0 0;font-size:.85em;">最終更新: 2026-11-15</p>
     </div>
 
     <div class="cta">
@@ -207,6 +218,14 @@
       <a class="btn" href="https://apps.apple.com/jp/app/id6785280296">App Store でダウンロード</a>
     </div>
   </main>
+
+  <section class="oapps" aria-label="同じ作者のほかの作品">
+    <h2>同じ作者のほかの作品（iPhone）</h2>
+    <ul>
+      <li><a href="https://apps.apple.com/jp/app/id6778652330?pt=129017883&amp;ct=cross-subscope-site&amp;mt=8"><img src="./apps/harvest-world.png" alt="" width="56" height="56" loading="lazy"><div><b>大農場ワールド</b><span>歩いて集める、放置で育つ農場ゲーム。</span><span class="en" lang="en">Harvest World: Idle Farm — A cozy idle farm that grows while you are away.</span></div></a></li>
+      <li><a href="https://apps.apple.com/jp/app/id6813067839?pt=129017883&amp;ct=cross-subscope-site&amp;mt=8"><img src="./apps/matsuri-knockdown.png" alt="" width="56" height="56" loading="lazy"><div><b>祭りノックダウン</b><span>縁日の射的で、景品をぜんぶ倒す物理パズル。</span><span class="en" lang="en">Matsuri Knockdown — Knock every prize off the shelf at a Japanese festival stall.</span></div></a></li>
+    </ul>
+  </section>
 
   <footer>
     <a href="./">Subscope トップ</a><a href="./prices.html">サブスク料金一覧</a><a href="./trials.html">無料体験の解約期限</a><a href="./diagnosis.html">支出診断</a><a href="./privacy.html">プライバシーポリシー</a><br>© 2026 Subscope
