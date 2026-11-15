@@ -19,7 +19,7 @@
  "@type": "Article",
  "headline": "サブスクの無料体験はいつまでに解約すればいい？ 主要20サービスの無料期間と解約期限の数え方（2026年11月確認）",
  "description": "Spotify・Apple Music・U-NEXT・Amazon プライム・Kindle Unlimited など主要20サービスの無料体験の長さを一覧化。「30日間」「1か月」の数え方と、課金されない解約期限を登録日から逆算してカレンダーに入れられる計算機つき。無料体験が無いサービス（Netflix・Hulu・Disney+ など）も明記。2026年11月1日確認。",
- "dateModified": "2026-11-14",
+ "dateModified": "2026-11-15",
  "inLanguage": "ja",
  "mainEntityOfPage": "https://ks-jf.github.io/Subscope-site/trials.html",
  "author": {
@@ -135,6 +135,17 @@
   .note ul{padding-left:1.3em;margin:.4em 0;}
   footer{color:var(--muted);font-size:.85em;text-align:center;padding:28px 20px 60px;}
   footer a{margin:0 8px;}
+  .oapps{max-width:760px;margin:0 auto;padding:8px 20px 12px;}
+  .oapps h2{font-size:1em;margin:0 0 10px;color:#6a6c75;font-weight:700;border:0;padding:0;}
+  .oapps ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .oapps a{display:flex;gap:12px;align-items:center;padding:12px 14px;border:1px solid #e3e8ef;border-radius:14px;
+    background:#fff;color:#1c1c22;text-decoration:none;height:100%;box-sizing:border-box;margin:0;}
+  .oapps a:hover{border-color:#0d47c9;}
+  .oapps img{width:56px;height:56px;border-radius:13px;flex:none;}
+  .oapps b{display:block;font-size:.98em;line-height:1.4;}
+  .oapps span{display:block;font-size:.84em;line-height:1.5;color:#6a6c75;}
+  .oapps span.en{font-size:.78em;}
+  @media (max-width:600px){ .oapps ul{grid-template-columns:1fr;} }
   code{background:#eef1f5;padding:2px 6px;border-radius:4px;}
 
   /* 狭い画面では 1サービス=1カードに積み替える（prices.html と同じ作り）。
@@ -239,10 +250,10 @@
         <li>無料体験の有無と長さは <strong>2026年11月1日時点</strong>の確認です。各行の「出典」に、公式ページで確認した物（<strong>公式</strong>）と、公式ページが読み取れず記事で確認した物（<strong>記事</strong>）を分けて書いています。キャンペーンで延びることや、終了することがあるため、登録前に必ず公式サイトでご確認ください。</li>
         <li>セール時の延長（プライムデー・ブラックフライデーの「3か月無料」「3か月99円」など）は、通常の長さの欄には入れず、条件・注意に書いています。</li>
         <li>通信キャリアやデバイス購入のセット特典（「◯か月無料」）は、サービス自体の無料体験ではないので表には入れていません。</li>
-        <li>料金は <a href="./prices.html">サブスク料金一覧（税込）</a>、解約の窓口と公式の解約ページは <a href="./cancel.html">解約方法の早見表</a> をご覧ください。毎月1日に価格を確認するときに、このページの確認日も見直します。</li>
+        <li>料金は <a href="./prices.html">サブスク料金一覧（税込）</a>、解約の窓口と公式の解約ページは <a href="./cancel.html">解約方法の早見表</a>、月額合計が平均より多いかは <a href="./diagnosis.html">サブスクの支出診断（Web 版）</a> をご覧ください。毎月1日に価格を確認するときに、このページの確認日も見直します。</li>
         <li>誤りに気づかれた場合は <a href="mailto:subscope.app@proton.me">subscope.app@proton.me</a> までお知らせください。</li>
       </ul>
-      <p class="muted" style="margin:6px 0 0;font-size:.85em;">最終更新: 2026-11-14</p>
+      <p class="muted" style="margin:6px 0 0;font-size:.85em;">最終更新: 2026-11-15</p>
     </div>
 
     <div class="cta">
@@ -252,8 +263,16 @@
     </div>
   </main>
 
+  <section class="oapps" aria-label="同じ作者のほかの作品">
+    <h2>同じ作者のほかの作品（iPhone）</h2>
+    <ul>
+      <li><a href="https://apps.apple.com/jp/app/id6778652330?pt=129017883&amp;ct=cross-subscope-site&amp;mt=8"><img src="./apps/harvest-world.png" alt="" width="56" height="56" loading="lazy"><div><b>大農場ワールド</b><span>歩いて集める、放置で育つ農場ゲーム。</span><span class="en" lang="en">Harvest World: Idle Farm — A cozy idle farm that grows while you are away.</span></div></a></li>
+      <li><a href="https://apps.apple.com/jp/app/id6813067839?pt=129017883&amp;ct=cross-subscope-site&amp;mt=8"><img src="./apps/matsuri-knockdown.png" alt="" width="56" height="56" loading="lazy"><div><b>祭りノックダウン</b><span>縁日の射的で、景品をぜんぶ倒す物理パズル。</span><span class="en" lang="en">Matsuri Knockdown — Knock every prize off the shelf at a Japanese festival stall.</span></div></a></li>
+    </ul>
+  </section>
+
   <footer>
-    <a href="./">Subscope トップ</a><a href="./prices.html">サブスク料金一覧</a><a href="./cancel.html">解約方法</a><a href="./privacy.html">プライバシーポリシー</a><br>© 2026 Subscope
+    <a href="./">Subscope トップ</a><a href="./prices.html">サブスク料金一覧</a><a href="./cancel.html">解約方法</a><a href="./diagnosis.html">支出診断</a><a href="./privacy.html">プライバシーポリシー</a><br>© 2026 Subscope
   </footer>
 
   <script>

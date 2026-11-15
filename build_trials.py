@@ -21,6 +21,8 @@ import html
 import json
 from pathlib import Path
 
+import site_parts  # 全ページ共通の部品（同じ作者のほかの作品のカード）
+
 ROOT = Path(__file__).resolve().parent
 SRC = ROOT / "trials.json"
 OUT = ROOT / "trials.html"
@@ -285,6 +287,7 @@ def render_page(data: dict, today: dt.date) -> str:
   .note ul{{padding-left:1.3em;margin:.4em 0;}}
   footer{{color:var(--muted);font-size:.85em;text-align:center;padding:28px 20px 60px;}}
   footer a{{margin:0 8px;}}
+{site_parts.OTHER_APPS_CSS}
   code{{background:#eef1f5;padding:2px 6px;border-radius:4px;}}
 
   /* 狭い画面では 1サービス=1カードに積み替える（prices.html と同じ作り）。
@@ -382,7 +385,7 @@ def render_page(data: dict, today: dt.date) -> str:
         <li>無料体験の有無と長さは <strong>{esc(label)}時点</strong>の確認です。各行の「出典」に、公式ページで確認した物（<strong>公式</strong>）と、公式ページが読み取れず記事で確認した物（<strong>記事</strong>）を分けて書いています。キャンペーンで延びることや、終了することがあるため、登録前に必ず公式サイトでご確認ください。</li>
         <li>セール時の延長（プライムデー・ブラックフライデーの「3か月無料」「3か月99円」など）は、通常の長さの欄には入れず、条件・注意に書いています。</li>
         <li>通信キャリアやデバイス購入のセット特典（「◯か月無料」）は、サービス自体の無料体験ではないので表には入れていません。</li>
-        <li>料金は <a href="./prices.html">サブスク料金一覧（税込）</a>、解約の窓口と公式の解約ページは <a href="./cancel.html">解約方法の早見表</a> をご覧ください。毎月1日に価格を確認するときに、このページの確認日も見直します。</li>
+        <li>料金は <a href="./prices.html">サブスク料金一覧（税込）</a>、解約の窓口と公式の解約ページは <a href="./cancel.html">解約方法の早見表</a>、月額合計が平均より多いかは <a href="./diagnosis.html">サブスクの支出診断（Web 版）</a> をご覧ください。毎月1日に価格を確認するときに、このページの確認日も見直します。</li>
         <li>誤りに気づかれた場合は <a href="mailto:{SUPPORT_MAIL}">{SUPPORT_MAIL}</a> までお知らせください。</li>
       </ul>
       <p class="muted" style="margin:6px 0 0;font-size:.85em;">最終更新: {today.isoformat()}</p>
@@ -395,8 +398,10 @@ def render_page(data: dict, today: dt.date) -> str:
     </div>
   </main>
 
+{site_parts.other_apps_html()}
+
   <footer>
-    <a href="./">Subscope トップ</a><a href="./prices.html">サブスク料金一覧</a><a href="./cancel.html">解約方法</a><a href="./privacy.html">プライバシーポリシー</a><br>© 2026 Subscope
+    <a href="./">Subscope トップ</a><a href="./prices.html">サブスク料金一覧</a><a href="./cancel.html">解約方法</a><a href="./diagnosis.html">支出診断</a><a href="./privacy.html">プライバシーポリシー</a><br>© 2026 Subscope
   </footer>
 
   <script>
