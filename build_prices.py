@@ -10,6 +10,7 @@ presets.json を更新したら（月次価格チェックのたびに）これ�
 - 金額は presets.json の方針どおり税込。USD 建ては公式の税抜価格 +10% が入っている。
 - 年払いプランがあるサービスは「年払いにすると年いくら安いか」を算出する。
 - 値上げの記録は PRICE_HIKES（presets.json の金額を上げた時に1行足す）。年ごとの表にして載せる。
+- 通信（スマホ・光回線）の値上げは TELECOM_HIKES。presets.json とは照合しない。TELECOM_SHOW_UNTIL を過ぎると節ごと消える。
 """
 from __future__ import annotations
 
@@ -83,6 +84,44 @@ PRICE_HIKES = [
     {"name": "Microsoft 365", "date": "2025-01-16", "monthly": (1490, 2130), "yearly": (14900, 21300),
      "note": "Personal。Copilot の追加に合わせた改定",
      "source": ("Impress Watch 2025-01-17", "https://www.watch.impress.co.jp/docs/news/1654780.html")},
+]
+
+# 通信の値上げ（スマホ・光回線）。presets.json には無い（契約先ごとの料金を持たない）ので、PRICE_HIKES とは別の表にする。
+# 一度きりの話題なので TELECOM_SHOW_UNTIL を過ぎたら build の時に節ごと消える（行は残してよい）。
+# - when: いつの利用分から。rise: 上がる額（税込）。examples: 代表的なプランだけ（全プランは公式の一覧へ）
+# - existing: 契約中の人も対象か。official: (表示名, 対象プランの載った公式ページ)。checked: 公式ページを読んだ日
+TELECOM_SHOW_UNTIL = "2027-02-28"
+TELECOM_CT = "web-prices-telecom"
+TELECOM_HIKES = [
+    {"name": "ドコモ", "kind": "スマホ", "date": "2026-12-01",
+     "when": "12/1（12 月の利用分）から",
+     "rise": "+110〜550円",
+     "examples": ["eximo +550円", "irumo（3GB・6GB・9GB）+330円", "irumo（0.5GB）+110円",
+                  "ahamo +165円（同じ日に段階制へ変更）"],
+     "existing": "対象。手続きは不要",
+     "note": "新規の受付を終えたプランが中心。ドコモ mini は対象外",
+     "official": ("ドコモ「料金プラン内容および月額料金改定のお知らせ」", "https://www.docomo.ne.jp/charge/plan_renewal2026/"),
+     "checked": "2026-11-20"},
+    {"name": "SoftBank 光・SoftBank Air", "kind": "光回線・ホームルーター", "date": "2026-12-01",
+     "when": "12 月の利用分（1 月の請求）から",
+     "rise": "+330円",
+     "examples": ["光 戸建て 2年自動更新 5,720円 → 6,050円", "光 マンション 2年自動更新 4,180円 → 4,510円",
+                  "Air 4G/5G共通プラン 5,368円 → 5,698円"],
+     "existing": "対象（2026 年 11 月以前の契約も含む）",
+     "note": "2年・5年の自動更新プランは、契約期間が満了した月の翌月の利用分から。"
+             "SoftBank 光・10ギガは対象外。12 月から名前が「SoftBank 光＋」に変わる",
+     "official": ("ソフトバンク「一部月額基本料金改定および名称変更のお知らせ」", "https://www.softbank.jp/internet/special/information2026/"),
+     "checked": "2026-11-20"},
+    {"name": "auひかり", "kind": "光回線", "date": "2027-01-01",
+     "when": "1/1（1 月の利用分・2 月の請求）から",
+     "rise": "+330円",
+     "examples": ["ホーム 1ギガ 3年契約（1年目）5,610円 → 5,940円", "マンション タイプV 16契約型 4,180円 → 4,510円"],
+     "existing": "対象。手続きは不要",
+     "note": "この値上げを理由に 2027/1/31 までに解約を申し出て、2/28 までに手続きが済めば契約解除料はかからない"
+             "（au one net の場合）。BIGLOBE・So-net など他のプロバイダで契約している人は、契約先の案内を確認。"
+             "auひかりプラスなど一部は対象外",
+     "official": ("au「auひかり 料金改定のお知らせ」", "https://www.au.com/information/notice_internet/service/20261016-01/"),
+     "checked": "2026-11-20"},
 ]
 
 
@@ -339,6 +378,52 @@ def render_price_hikes(today: dt.date) -> str:
     return "".join(parts)
 
 
+def telecom_app_url() -> str:
+    return f"{APP_STORE_URL}?pt={site_parts.CAMPAIGN_PT}&ct={TELECOM_CT}&mt=8"
+
+
+def render_telecom_hikes(today: dt.date) -> str:
+    """通信（スマホ・光回線）の値上げの節。TELECOM_SHOW_UNTIL を過ぎたら出さない。"""
+    if not TELECOM_HIKES or today.isoformat() > TELECOM_SHOW_UNTIL:
+        return ""
+    rows = []
+    for h in sorted(TELECOM_HIKES, key=lambda h: h["date"]):
+        name = f"{esc(h['name'])}<br><small class=\"muted\">{esc(h['kind'])}</small>"
+        rise = f"<strong>{esc(h['rise'])}</strong>／月<br><small class=\"muted\">" +             "<br>".join(esc(x) for x in h["examples"]) + "</small>"
+        existing = esc(h["existing"])
+        if h.get("note"):
+            existing += f"<br><small class=\"muted\">{esc(h['note'])}</small>"
+        label, url = h["official"]
+        y, m, d = h["checked"].split("-")
+        src = (f"<a href=\"{esc(url)}\" rel=\"noopener\" target=\"_blank\">{esc(label)}</a>"
+               f"<br><small class=\"muted\">{int(y)}/{int(m)}/{int(d)} に確認</small>")
+        rows.append(
+            "<tr>"
+            f"<th scope=\"row\">{name}</th>"
+            f"<td data-label=\"いつから\">{esc(h['when'])}</td>"
+            f"<td data-label=\"上がる額（税込）\">{rise}</td>"
+            f"<td data-label=\"契約中の人\">{existing}</td>"
+            f"<td data-label=\"公式の案内\">{src}</td>"
+            "</tr>"
+        )
+    return (
+        "<h2 id=\"telecom\">通信の値上げ（2026年12月〜2027年1月）</h2>"
+        "<p>サブスクではありませんが、毎月かならず引き落とされる固定費として、スマホと光回線の値上げもまとめました。"
+        "どれも<strong>すでに契約している人も対象</strong>で、手続きをしなくても自動で新しい料金に切り替わります。"
+        "1 月〜2 月の請求で初めて気づく人が多いので、先に確かめておくと安心です。"
+        "上がる額はプランごとに違うため、代表的なプランだけを載せています。自分のプランは「公式の案内」から確認してください。</p>"
+        "<div class=\"tablewrap\"><table class=\"hikes telecom\">"
+        "<thead><tr><th scope=\"col\">サービス</th><th scope=\"col\">いつから</th>"
+        "<th scope=\"col\">上がる額（税込）</th><th scope=\"col\">契約中の人</th>"
+        "<th scope=\"col\">公式の案内</th></tr></thead>"
+        f"<tbody>{''.join(rows)}</tbody></table></div>"
+        "<p class=\"total\">スマホ（eximo）と光回線を両方契約していると、合わせて月 880円（年 10,560円）の負担増</p>"
+        "<p>通信費や家賃・電気代のような固定費も、Subscope にサブスクと並べて登録しておけば、"
+        "値上げの後の月額・年額の合計をまとめて見直せます。"
+        f"<a href=\"{esc(telecom_app_url())}\"><strong>固定費も Subscope で管理する（App Store）→</strong></a></p>"
+    )
+
+
 def render_page(version: str, presets: list[dict], today: dt.date,
                 rate: float, rate_date: str) -> str:
     label = version_label(version)
@@ -347,6 +432,7 @@ def render_page(version: str, presets: list[dict], today: dt.date,
 
     nav = " ／ ".join(f"<a href=\"#g{i}\">{esc(g)}</a>" for i, (g, _) in enumerate(groups))
     hikes = render_price_hikes(today)
+    telecom = render_telecom_hikes(today)
 
     sections = []
     for i, (g, items) in enumerate(groups):
@@ -411,6 +497,8 @@ def render_page(version: str, presets: list[dict], today: dt.date,
   table{{border-collapse:collapse;width:100%;min-width:500px;font-size:.95em;}}
   table.hikes{{min-width:700px;}}
   table.hikes td.num{{white-space:normal;}}
+  table.telecom thead th:not(:first-child){{text-align:left;}}
+  table.telecom tbody th{{white-space:normal;min-width:7.5em;}}
   h3{{font-size:1.05em;margin:1.6em 0 .5em;color:var(--muted);}}
   th,td{{padding:10px 12px;border-bottom:1px solid #eee;text-align:left;vertical-align:top;}}
   thead th{{background:#f6f8fb;font-weight:700;font-size:.88em;color:var(--muted);white-space:nowrap;}}
@@ -445,6 +533,7 @@ def render_page(version: str, presets: list[dict], today: dt.date,
   @media (max-width:600px){{
     .tablewrap{{overflow:visible;border:none;border-radius:0;}}
     table{{min-width:0;display:block;}}
+    table.hikes{{min-width:0;}}
     thead{{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}}
     tbody,tr,th,td{{display:block;}}
     tbody tr{{border:1px solid #e7ebf1;border-radius:12px;padding:10px 14px;margin-bottom:10px;}}
@@ -455,6 +544,8 @@ def render_page(version: str, presets: list[dict], today: dt.date,
         text-align:left;flex:none;}}
     tbody td.num{{white-space:normal;}}
     tbody td.empty{{display:none;}}
+    table.telecom tbody td{{display:block;text-align:left;}}
+    table.telecom tbody td::before{{display:block;}}
     tbody tr:last-child th,tbody tr:last-child td{{border-bottom:none;}}
     p.total{{margin-top:0;}}
     ol.rank li{{padding:10px 12px;flex-wrap:wrap;row-gap:2px;}}
@@ -475,13 +566,15 @@ def render_page(version: str, presets: list[dict], today: dt.date,
     金額はすべて<strong>税込</strong>で、個人向けの標準プランを掲載しています。
     このデータは、サブスク管理アプリ <a href="./">Subscope</a> がサービス登録時に自動入力する料金プリセットと同じものです。</p>
 
-    <p class="nav">{nav} ／ <a href="#yearly">年払いの割引ランキング</a>{' ／ <a href="#hikes">値上げ一覧</a>' if hikes else ''} ／ <a href="./trials.html">無料体験の解約期限</a> ／ <a href="./cancel.html">解約方法</a> ／ <a href="./diagnosis.html">支出診断</a></p>
+    <p class="nav">{nav} ／ <a href="#yearly">年払いの割引ランキング</a>{' ／ <a href="#hikes">値上げ一覧</a>' if hikes else ''}{' ／ <a href="#telecom">通信の値上げ</a>' if telecom else ''} ／ <a href="./trials.html">無料体験の解約期限</a> ／ <a href="./cancel.html">解約方法</a> ／ <a href="./diagnosis.html">支出診断</a></p>
 
     {''.join(sections)}
 
     {render_savings_ranking(presets, rate, rate_date)}
 
     {hikes}
+
+    {telecom}
 
     <h2 id="trials">無料体験はいつまでに解約すればいい？</h2>
     <div class="card">
