@@ -1,11 +1,12 @@
 {
   "version": "2026-11",
-  "note": "金額は2026年11月時点の目安。すべて税込（消費税10%）で統一する。日本のサービスは総額表示義務があるため表示価格がそのまま税込だが、USD建て（ChatGPT/Claude等）は公式が税抜表示なので+10%して入れること。家賃・保険料は非課税。プラン改定で変わるため必要に応じて更新してください。currency: JPY/USD, cycle: weekly/monthly/yearly。formerNames: 改名前の名前（サービスが改名したら name を新しい名前にし、旧名をここへ入れる。アプリは旧名で保存された既存サブスクの編集画面でお知らせを出し、プリセット検索でも照合する。古い版のアプリは読み飛ばす）。priceHistory: 値上げの記録（effectiveDate=新価格の施行日・cycle・currency・oldAmount→newAmount・source=出典。月次の価格チェックで金額を上げたら 1 行足す。アプリは登録額が旧価格のままの既存サブスクに一覧と編集画面で「値上げされたようです」と知らせ、1 回押せば今の価格に直せる。サイト Subscope-site の presets.json にも同じ物を入れること＝アプリはリモートの物を優先して読む）",
+  "note": "金額は2026年11月時点の目安。すべて税込（消費税10%）で統一する。日本のサービスは総額表示義務があるため表示価格がそのまま税込だが、USD建て（ChatGPT/Claude等）は公式が税抜表示なので+10%して入れること。家賃・保険料は非課税。プラン改定で変わるため必要に応じて更新してください。currency: JPY/USD, cycle: weekly/monthly/yearly。formerNames: 改名前の名前（サービスが改名したら name を新しい名前にし、旧名をここへ入れる。アプリは旧名で保存された既存サブスクの編集画面でお知らせを出し、プリセット検索でも照合する。古い版のアプリは読み飛ばす）。priceHistory: 値上げの記録（effectiveDate=新価格の施行日・cycle・currency・oldAmount→newAmount・source=出典。月次の価格チェックで金額を上げたら 1 行足す。アプリは登録額が旧価格のままの既存サブスクに一覧と編集画面で「値上げされたようです」と知らせ、1 回押せば今の価格に直せる。サイト Subscope-site の presets.json にも同じ物を入れること＝アプリはリモートの物を優先して読む）。cancelUrl: 解約の手順のページ（公式サイト cancel.html のそのサービスの行 #s-<id>。id は cancel.json。アプリ 2.2〜は編集画面に「解約の手順を見る」を出す。https・ks-jf.github.io だけを開く。固定費には付けない。build_cancel.py が行き先の有無を確かめる）",
   "presets": [
     {
       "name": "Netflix",
       "symbol": "play.rectangle.fill",
       "category": "エンタメ",
+      "cancelUrl": "https://ks-jf.github.io/Subscope-site/cancel.html#s-netflix",
       "plans": [
         { "cycle": "monthly", "currency": "JPY", "amount": 1590 }
       ]
@@ -14,6 +15,7 @@
       "name": "Spotify",
       "symbol": "music.note",
       "category": "エンタメ",
+      "cancelUrl": "https://ks-jf.github.io/Subscope-site/cancel.html#s-spotify",
       "plans": [
         { "cycle": "monthly", "currency": "JPY", "amount": 1080 }
       ],
@@ -25,6 +27,7 @@
       "name": "Apple Music",
       "symbol": "music.note.list",
       "category": "エンタメ",
+      "cancelUrl": "https://ks-jf.github.io/Subscope-site/cancel.html#s-apple-music",
       "plans": [
         { "cycle": "monthly", "currency": "JPY", "amount": 1180 },
         { "cycle": "yearly", "currency": "JPY", "amount": 11800 }
@@ -38,6 +41,7 @@
       "name": "Apple TV+",
       "symbol": "appletv.fill",
       "category": "エンタメ",
+      "cancelUrl": "https://ks-jf.github.io/Subscope-site/cancel.html#s-apple-tv",
       "plans": [
         { "cycle": "monthly", "currency": "JPY", "amount": 1200 },
         { "cycle": "yearly", "currency": "JPY", "amount": 12000 }
@@ -50,6 +54,7 @@
       "name": "Amazon Prime",
       "symbol": "shippingbox.fill",
       "category": "ライフスタイル",
+      "cancelUrl": "https://ks-jf.github.io/Subscope-site/cancel.html#s-amazon-prime",
       "plans": [
         { "cycle": "monthly", "currency": "JPY", "amount": 600 },
         { "cycle": "yearly", "currency": "JPY", "amount": 5900 }
@@ -59,6 +64,7 @@
       "name": "YouTube Premium",
       "symbol": "play.circle.fill",
       "category": "エンタメ",
+      "cancelUrl": "https://ks-jf.github.io/Subscope-site/cancel.html#s-youtube-premium",
       "plans": [
         { "cycle": "monthly", "currency": "JPY", "amount": 1280 },
         { "cycle": "yearly", "currency": "JPY", "amount": 12800 }
@@ -68,6 +74,7 @@
       "name": "Disney+",
       "symbol": "sparkles.tv.fill",
       "category": "エンタメ",
+      "cancelUrl": "https://ks-jf.github.io/Subscope-site/cancel.html#s-disney-plus",
       "plans": [
         { "cycle": "monthly", "currency": "JPY", "amount": 1250 },
         { "cycle": "yearly", "currency": "JPY", "amount": 12500 }
@@ -81,6 +88,7 @@
       "name": "Hulu",
       "symbol": "tv.fill",
       "category": "エンタメ",
+      "cancelUrl": "https://ks-jf.github.io/Subscope-site/cancel.html#s-hulu",
       "plans": [
         { "cycle": "monthly", "currency": "JPY", "amount": 1320 }
       ],
@@ -92,6 +100,7 @@
       "name": "U-NEXT",
       "symbol": "play.rectangle.fill",
       "category": "エンタメ",
+      "cancelUrl": "https://ks-jf.github.io/Subscope-site/cancel.html#s-u-next",
       "plans": [
         { "cycle": "monthly", "currency": "JPY", "amount": 2189 }
       ]
@@ -100,6 +109,7 @@
       "name": "ABEMAプレミアム",
       "symbol": "play.tv.fill",
       "category": "エンタメ",
+      "cancelUrl": "https://ks-jf.github.io/Subscope-site/cancel.html#s-abema",
       "plans": [
         { "cycle": "monthly", "currency": "JPY", "amount": 1180 }
       ]
@@ -108,6 +118,7 @@
       "name": "dアニメストア",
       "symbol": "film.fill",
       "category": "エンタメ",
+      "cancelUrl": "https://ks-jf.github.io/Subscope-site/cancel.html#s-d-anime",
       "plans": [
         { "cycle": "monthly", "currency": "JPY", "amount": 660 }
       ]
@@ -116,6 +127,7 @@
       "name": "DAZN",
       "symbol": "sportscourt.fill",
       "category": "エンタメ",
+      "cancelUrl": "https://ks-jf.github.io/Subscope-site/cancel.html#s-dazn",
       "plans": [
         { "cycle": "monthly", "currency": "JPY", "amount": 4200 },
         { "cycle": "yearly", "currency": "JPY", "amount": 32000 }
@@ -125,6 +137,7 @@
       "name": "Amazon Music Unlimited",
       "symbol": "headphones",
       "category": "エンタメ",
+      "cancelUrl": "https://ks-jf.github.io/Subscope-site/cancel.html#s-amazon-music",
       "plans": [
         { "cycle": "monthly", "currency": "JPY", "amount": 1180 }
       ]
@@ -134,6 +147,7 @@
       "formerNames": ["Kindle Unlimited"],
       "symbol": "book.fill",
       "category": "エンタメ",
+      "cancelUrl": "https://ks-jf.github.io/Subscope-site/cancel.html#s-kindle",
       "plans": [
         { "cycle": "monthly", "currency": "JPY", "amount": 980 }
       ]
@@ -142,6 +156,7 @@
       "name": "Nintendo Switch Online",
       "symbol": "gamecontroller.fill",
       "category": "エンタメ",
+      "cancelUrl": "https://ks-jf.github.io/Subscope-site/cancel.html#s-nintendo-switch-online",
       "plans": [
         { "cycle": "monthly", "currency": "JPY", "amount": 400 },
         { "cycle": "yearly", "currency": "JPY", "amount": 3000 }
@@ -151,6 +166,7 @@
       "name": "PlayStation Plus",
       "symbol": "gamecontroller.fill",
       "category": "エンタメ",
+      "cancelUrl": "https://ks-jf.github.io/Subscope-site/cancel.html#s-playstation-plus",
       "plans": [
         { "cycle": "monthly", "currency": "JPY", "amount": 850 },
         { "cycle": "yearly", "currency": "JPY", "amount": 6800 }
@@ -160,6 +176,7 @@
       "name": "ChatGPT Plus",
       "symbol": "brain.head.profile",
       "category": "仕事",
+      "cancelUrl": "https://ks-jf.github.io/Subscope-site/cancel.html#s-chatgpt",
       "plans": [
         { "cycle": "monthly", "currency": "USD", "amount": 22 }
       ]
@@ -168,6 +185,7 @@
       "name": "Claude Pro",
       "symbol": "brain.head.profile",
       "category": "仕事",
+      "cancelUrl": "https://ks-jf.github.io/Subscope-site/cancel.html#s-claude-pro",
       "plans": [
         { "cycle": "monthly", "currency": "USD", "amount": 22 },
         { "cycle": "yearly", "currency": "USD", "amount": 220 }
@@ -178,6 +196,7 @@
       "formerNames": ["Claude Max x5"],
       "symbol": "brain.head.profile",
       "category": "仕事",
+      "cancelUrl": "https://ks-jf.github.io/Subscope-site/cancel.html#s-claude-max",
       "plans": [
         { "cycle": "monthly", "currency": "USD", "amount": 110 }
       ]
@@ -187,6 +206,7 @@
       "formerNames": ["Claude Max x20"],
       "symbol": "brain.head.profile",
       "category": "仕事",
+      "cancelUrl": "https://ks-jf.github.io/Subscope-site/cancel.html#s-claude-ultra",
       "plans": [
         { "cycle": "monthly", "currency": "USD", "amount": 220 }
       ]
@@ -195,6 +215,7 @@
       "name": "Adobe Creative Cloud",
       "symbol": "paintbrush.pointed.fill",
       "category": "仕事",
+      "cancelUrl": "https://ks-jf.github.io/Subscope-site/cancel.html#s-adobe-cc",
       "plans": [
         { "cycle": "monthly", "currency": "JPY", "amount": 9080 },
         { "cycle": "yearly", "currency": "JPY", "amount": 102960 }
@@ -207,6 +228,7 @@
       "name": "Microsoft 365",
       "symbol": "doc.fill",
       "category": "仕事",
+      "cancelUrl": "https://ks-jf.github.io/Subscope-site/cancel.html#s-microsoft-365",
       "plans": [
         { "cycle": "monthly", "currency": "JPY", "amount": 2130 },
         { "cycle": "yearly", "currency": "JPY", "amount": 21300 }
@@ -220,6 +242,7 @@
       "name": "Dropbox",
       "symbol": "tray.full.fill",
       "category": "仕事",
+      "cancelUrl": "https://ks-jf.github.io/Subscope-site/cancel.html#s-dropbox",
       "plans": [
         { "cycle": "monthly", "currency": "JPY", "amount": 1500 },
         { "cycle": "yearly", "currency": "JPY", "amount": 14400 }
@@ -229,6 +252,7 @@
       "name": "iCloud+",
       "symbol": "icloud.fill",
       "category": "ライフスタイル",
+      "cancelUrl": "https://ks-jf.github.io/Subscope-site/cancel.html#s-icloud",
       "plans": [
         { "cycle": "monthly", "currency": "JPY", "amount": 180 }
       ],
@@ -240,6 +264,7 @@
       "name": "Google One",
       "symbol": "externaldrive.fill",
       "category": "ライフスタイル",
+      "cancelUrl": "https://ks-jf.github.io/Subscope-site/cancel.html#s-google-one",
       "plans": [
         { "cycle": "monthly", "currency": "JPY", "amount": 290 }
       ]

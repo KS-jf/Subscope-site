@@ -20,6 +20,7 @@ from __future__ import annotations
 import datetime as dt
 import html
 import json
+import re
 import sys
 import urllib.error
 import urllib.request
@@ -34,6 +35,10 @@ OUT = ROOT / "cancel.html"
 
 SITE_URL = "https://ks-jf.github.io/Subscope-site/"
 APP_STORE_URL = "https://apps.apple.com/jp/app/id6785280296"
+# 解約ページからストアへ（キャンペーンリンク。pt はアカウント共通・ct=web-cancel で ASC に数えられる。inbox ss-261126-3）
+APP_STORE_URL_CANCEL = APP_STORE_URL + "?pt=129017883&ct=web-cancel&mt=8"
+# アプリ（2.2〜）の編集画面「解約の手順を見る」が開く先（presets.json の cancelUrl）＝行の id は s-<cancel.json の id>
+ROW_ID_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 SUPPORT_MAIL = "subscope.app@proton.me"
 EXCLUDED_CATEGORIES = {"固定費"}
 
@@ -83,6 +88,22 @@ def check(data: dict) -> None:
     bad = [s["name"] for s in data["services"] if s["where"] not in WHERE_LABEL]
     if bad:
         sys.exit(f"where が決まった値でない: {', '.join(bad)}")
+    ids = [s.get("id", "") for s in data["services"]]
+    bad_id = [s["name"] for s in data["services"] if not ROW_ID_RE.match(s.get("id", ""))]
+    if bad_id:
+        sys.exit(f"id が無い・形が違う（英小文字・数字・ハイフン）: {', '.join(bad_id)}")
+    if len(set(ids)) != len(ids):
+        sys.exit("id が重なっている")
+    # presets.json の cancelUrl は、このページの同じサービスの行を指していること（アプリが開く先。行き先の無いリンクを配らない）
+    by_name = {s["name"]: s["id"] for s in data["services"]}
+    presets = json.loads(PRESETS.read_text(encoding="utf-8"))["presets"]
+    wrong = []
+    for p in presets:
+        want = f"{SITE_URL}cancel.html#s-{by_name[p['name']]}" if p["name"] in by_name else None
+        if p.get("cancelUrl") != want:
+            wrong.append(p["name"])
+    if wrong:
+        sys.exit(f"presets.json の cancelUrl が cancel.json の id と合わない: {', '.join(wrong)}")
     groups = set(data["groups"])
     off = [s["name"] for s in data["services"] if s["group"] not in groups]
     if off:
@@ -127,7 +148,7 @@ def render_row(s: dict) -> str:
     src = (f"<a href=\"{esc(s['url'])}\" rel=\"noopener\" target=\"_blank\">{esc(s['label'])}</a>"
            f"<br><small class=\"muted\">{esc(jp_date(s['date']))} 確認</small>")
     return (
-        "<tr>"
+        f"<tr id=\"s-{esc(s['id'])}\">"
         f"<th scope=\"row\">{esc(s['name'])}</th>"
         f"<td class=\"where where-{esc(s['where'])}\" data-label=\"解約の窓口\">{esc(where)}</td>"
         f"<td class=\"src\" data-label=\"公式の解約ページ\">{src}</td>"
@@ -241,6 +262,9 @@ def render_page(data: dict, today: dt.date) -> str:
   thead th{{background:#f6f8fb;font-weight:700;font-size:.88em;color:var(--muted);white-space:nowrap;}}
   tbody th{{font-weight:600;white-space:nowrap;}}
   tbody tr:last-child th,tbody tr:last-child td{{border-bottom:none;}}
+  /* アプリの「解約の手順を見る」から来た時に、そのサービスの行を目立たせる（#s-<id>） */
+  tbody tr{{scroll-margin-top:12px;}}
+  tbody tr:target th,tbody tr:target td{{background:#fff7e0;}}
   td.where{{font-size:.9em;min-width:9em;}}
   td.where-both{{color:var(--warn);}}
   td.note{{font-size:.88em;color:#3a3a44;min-width:16em;}}
@@ -347,7 +371,8 @@ def render_page(data: dict, today: dt.date) -> str:
     <div class="cta">
       <h2>解約したいサブスク、次の請求日はいつですか？</h2>
       <p>Subscope は、サブスクと固定費を登録するだけで次の支払日と月額・年額の合計をひと目で見通せる iPhone アプリです。更新日の数日前にプッシュ通知でお知らせするので、「更新の 24 時間前まで」に間に合います。</p>
-      <a class="btn" href="{APP_STORE_URL}">App Store でダウンロード</a>
+      <p><strong>解約したら、記録して浮いた額を見る。</strong>Subscope では、解約したサブスクを消さずに「停止」にできます。合計から外れるので、月額・年額がいくら軽くなったかがそのまま見えます。</p>
+      <a class="btn" href="{esc(APP_STORE_URL_CANCEL)}">App Store でダウンロード</a>
     </div>
   </main>
 
